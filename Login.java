@@ -32,64 +32,66 @@ public class Login {
     }
 
     public static void montar(){
-        janela = new JFrame();
-        janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            janela = new JFrame();
+            janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        abas = new JTabbedPane();
-        abas.addTab("Livros" , new JPanel());
-        abas.addTab("Exemplares" , new JPanel());
-        abas.addTab("Empréstimos" , new JPanel());
-        abas.addTab("Devoluções" , new JPanel());
-        abas.setEnabled(false);
+            abas = new JTabbedPane();
+            abas.addTab("Livros", new JPanel());
+            abas.addTab("Exemplares", new JPanel());
+            abas.addTab("Empréstimos", new JPanel());
+            abas.addTab("Devoluções", new JPanel());
+            abas.setEnabled(false);
 
-        LServidor = new JLabel("Servidor:");
-        LBD = new JLabel("Banco de dados:");
-        LUsuario = new JLabel("Usuário:");
-        LSenha = new JLabel("Senha:");
+            LServidor = new JLabel("Servidor:");
+            LServidor.setPreferredSize(new Dimension(50 , 50));
+            LBD = new JLabel("Banco de dados:");
+            LUsuario = new JLabel("Usuário:");
+            LSenha = new JLabel("Senha:");
 
-        //fazer um check box para mostrar a senha;
+            servidor = new JTextField(30);
+            banco_de_dados = new JTextField(20);
+            usuario = new JTextField(10);
+            senha = new JTextField(10);
 
-
-        servidor = new JTextField(30);    //pegar o valor --> servidor.getText();
-        banco_de_dados = new JTextField(20);
-        usuario = new JTextField(10);
-        senha = new JTextField(10);
-
-        conectar = new JButton("Conectar");
-        conectar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    getConnection();
-                    System.out.println("Deu certo!");
+            conectar = new JButton("Conectar");
+            conectar.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        getConnection();
+                        System.out.println("Deu certo!");
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
                 }
-                catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                }
-            }
-        });
+            });
 
-        container_area = new JPanel();
-        container_area.setLayout(new GridLayout(5, 2, 5, 5)); // 5 linhas, 2 colunas, espaçamento de 10px
-        container_area.add(LServidor);
-        container_area.add(servidor);
-        container_area.add(LBD);
-        container_area.add(banco_de_dados);
-        container_area.add(LUsuario);
-        container_area.add(usuario);
-        container_area.add(LSenha);
-        container_area.add(senha);
-        container_area.add(new JLabel());   //  adiciona um espaçamento para colocar o botão
-        container_area.add(conectar);
+            // Criar um painel interno para os campos de texto e labels
+            JPanel panelCampos = new JPanel();
+            panelCampos.setLayout(new GridLayout(4, 2, 5, 5)); // 4 linhas, 2 colunas, espaçamento 5px
+            panelCampos.add(LServidor);
+            panelCampos.add(servidor);
+            panelCampos.add(LBD);
+            panelCampos.add(banco_de_dados);
+            panelCampos.add(LUsuario);
+            panelCampos.add(usuario);
+            panelCampos.add(LSenha);
+            panelCampos.add(senha);
 
-        janela.setLayout(new BorderLayout());
-        janela.add(abas , BorderLayout.NORTH);  //  NORTH é a região da janela
-        janela.add(container_area , BorderLayout.CENTER);
-        janela.pack();
-        janela.setVisible(true);
+            // Painel principal para organizar campos e botão
+            container_area = new JPanel();
+            container_area.setLayout(new BorderLayout(10, 10));
+            container_area.add(panelCampos, BorderLayout.CENTER); // Campos no centro
+            container_area.add(conectar, BorderLayout.SOUTH);     // Botão no sul
 
-    }
+            janela.setLayout(new BorderLayout());
+            janela.add(abas, BorderLayout.NORTH);           // Abas no topo
+            janela.add(container_area, BorderLayout.CENTER); // Painel principal no centro
+            janela.pack();
+            janela.setVisible(true);
+        }
 
-    public static Connection getConnection() throws SQLException{
+
+        public static Connection getConnection() throws SQLException{
         String servidorText = servidor.getText();
         String bdText = banco_de_dados.getText();
         String usuarioText = usuario.getText();
@@ -126,7 +128,7 @@ public class Login {
         container_area.add(LSenha);
         container_area.add(senha);
         container_area.add(new JLabel());   //  adiciona um espaçamento para colocar o botão
-        container_area.add(conectar);
+        container_area.add(conectar , BorderLayout.SOUTH);
         container_area.add(new JLabel());
         container_area.add(cbx);
 
