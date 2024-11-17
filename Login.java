@@ -1,11 +1,16 @@
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+/*
+import java.sql.SQLException;
+import java.sql.Connection;
+import javax.swing.border.Border;
+ */
+
 
 // tela de login ao bd
 
@@ -16,8 +21,17 @@ public class Login {
     public static JTextField servidor, banco_de_dados , usuario , senha;
     public static JButton conectar;
     public static JLabel LServidor , LBD , LUsuario , LSenha;
+    public static JComboBox cbx;
+    public static Connection conexao;
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
+        montar();
+        if (getConnection() != null){
+            montarComCbx();
+        }
+    }
+
+    public static void montar(){
         janela = new JFrame();
         janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -75,7 +89,7 @@ public class Login {
 
     }
 
-    public static Connection getConnection() throws Exception{
+    public static Connection getConnection() throws SQLException{
         String servidorText = servidor.getText();
         String bdText = banco_de_dados.getText();
         String usuarioText = usuario.getText();
@@ -84,7 +98,42 @@ public class Login {
         String URL =
                 "jdbc:sqlserver://" + servidorText + ":1433;databaseName="+ bdText +
                         ";integratedSecurity=false;encrypt=false;trustServerCertificate=true";
+        try{
+            conexao = DriverManager.getConnection(URL , usuarioText , senhaText);
+            return conexao;
+        }
+        catch(SQLException erro){
+            System.out.println(erro.getMessage());
+        }
+        return null;
+    }
 
-        return DriverManager.getConnection(URL , usuarioText , senhaText);
+    public static void montarComCbx(){
+        abas.setEnabled(true);
+        String[] opcoes = {"biblioteca1" , "biblioteca2"};  //aqui vai ser estatico e com o vetor de resultados do select sisbid.bibliotecas
+        cbx = new JComboBox<>(opcoes);
+        //colocar a lista de bibliotecas nele
+        container_area.removeAll(); // limpa ele para fazer de novo
+        janela.removeAll();
+
+        container_area.setLayout(new GridLayout(5, 2, 5, 5)); // 5 linhas, 2 colunas, espaçamento de 10px
+        container_area.add(LServidor);
+        container_area.add(servidor);
+        container_area.add(LBD);
+        container_area.add(banco_de_dados);
+        container_area.add(LUsuario);
+        container_area.add(usuario);
+        container_area.add(LSenha);
+        container_area.add(senha);
+        container_area.add(new JLabel());   //  adiciona um espaçamento para colocar o botão
+        container_area.add(conectar);
+        container_area.add(new JLabel());
+        container_area.add(cbx);
+
+        janela.setLayout(new BorderLayout());
+        janela.add(abas , BorderLayout.NORTH);  //  NORTH é a região da janela
+        janela.add(container_area , BorderLayout.CENTER);
+        janela.pack();
+        janela.setVisible(true);
     }
 }
