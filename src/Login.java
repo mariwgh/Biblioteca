@@ -22,7 +22,6 @@ public class Login {
     public static JLabel LServidor , LBD , LUsuario , LSenha;
     public static JComboBox cbx;
     public static Connection conexao;
-    public static String resposta;
     public static JPanel panelCampos;
     public static ResultSet resultadoSelect;
 
