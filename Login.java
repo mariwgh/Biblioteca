@@ -26,7 +26,7 @@ public class Login {
 
     public static void main(String[] args) throws Exception {
         montar();
-        if (getConnection() != null){
+        if (getConnection(servidor.getText() , banco_de_dados.getText() , usuario.getText() , senha.getText()) != null){
             montarComCbx();
         }
     }
@@ -57,7 +57,7 @@ public class Login {
             conectar.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        getConnection();
+                        getConnection(servidor.getText() , banco_de_dados.getText() , usuario.getText() , senha.getText());
                         System.out.println("Deu certo!");
                     } catch (Exception ex) {
                         System.out.println(ex.getMessage());
@@ -91,23 +91,19 @@ public class Login {
         }
 
 
-        public static Connection getConnection() throws SQLException{
-        String servidorText = servidor.getText();
-        String bdText = banco_de_dados.getText();
-        String usuarioText = usuario.getText();
-        String senhaText = senha.getText();
-        //escrever a função para conectar ao bd aqui;
-        String URL =
-                "jdbc:sqlserver://" + servidorText + ":1433;databaseName="+ bdText +
-                        ";integratedSecurity=false;encrypt=false;trustServerCertificate=true";
-        try{
-            conexao = DriverManager.getConnection(URL , usuarioText , senhaText);
-            return conexao;
-        }
-        catch(SQLException erro){
-            System.out.println(erro.getMessage());
-        }
-        return null;
+        public static Connection getConnection(String servidorText , String bdText , String usuarioText , String senhaText) throws SQLException{
+            //escrever a função para conectar ao bd aqui;
+            String URL =
+                    "jdbc:sqlserver://" + servidorText + ":1433;databaseName="+ bdText +
+                            ";integratedSecurity=false;encrypt=false;trustServerCertificate=true";
+            try{
+                conexao = DriverManager.getConnection(URL , usuarioText , senhaText);
+                return conexao;
+            }
+            catch(SQLException erro){
+                System.out.println(erro.getMessage());
+            }
+            return null;
     }
 
     public static void montarComCbx(){
