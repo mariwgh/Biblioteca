@@ -58,9 +58,10 @@ public class Login {
                 public void actionPerformed(ActionEvent e) {
                     try {
                         getConnection(servidor.getText() , banco_de_dados.getText() , usuario.getText() , senha.getText());
-                        System.out.println("Deu certo!");
-                        verificar();
-
+                        if(conexao != null){
+                            System.out.println("Deu certo!");
+                            verificar();
+                        }
                     }
                     catch (Exception ex) {
                         System.out.println(ex.getMessage());
