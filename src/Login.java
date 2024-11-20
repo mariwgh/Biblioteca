@@ -1,6 +1,8 @@
 package src;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +14,12 @@ import java.sql.CallableStatement;  	// para chamar stored procedures
 import java.sql.Date;
 */
 
+//agora, tem que fazer os outros frames e fazer uma variavel para pegar a PK
+//da bibliotexca escolhida e passar como parametro para os outros frames
+//para que eles mexam somente na biblioteca selecionada
+//mas e o ngc de data??
+//cada frame tem que ter o atributo "idBibliotecaEscolhida"
+
 // tela de login ao bd
 public class Login {
     public static JFrame janela;
@@ -22,7 +30,7 @@ public class Login {
     public static JLabel LServidor , LBD , LUsuario , LSenha;
     public static JComboBox cbx;
     public static Connection conexao;
-    public static JPanel panelCampos;
+
     public static ResultSet resultadoSelect;
 
     public static void main(String[] args) throws Exception {
@@ -30,16 +38,39 @@ public class Login {
     }
 
     public static void montar(){
+            JPanel panelCampos;
 
             janela = new JFrame();
             janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             abas = new JTabbedPane();
-            abas.addTab("Livros", new JPanel());
+            abas.addTab("Livros", mostrarLivros());
             abas.addTab("Exemplares", new JPanel());
             abas.addTab("Empréstimos", new JPanel());
             abas.addTab("Devoluções", new JPanel());
             abas.setEnabled(false);
+        abas.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int index = abas.getSelectedIndex();  // Obtém o índice da aba selecionada
+                System.out.println("Aba selecionada: " + index);  // Exibe o índice da aba selecionada
+
+                // Ações baseadas na aba selecionada
+                if (index == 0) {
+                    System.out.println("Redirecionando para Livros...");
+                    mostrarLivros();
+                } else if (index == 1) {
+                    System.out.println("Redirecionando para Exemplares...");
+                    //mostrarExemplares();
+                } else if (index == 2) {
+                    System.out.println("Redirecionando para Empréstimos...");
+                    //mostrarEmprestimos();
+                } else if (index == 3) {
+                    System.out.println("Redirecionando para Devoluções...");
+                    //mostrarDevolucoes();
+                }
+            }
+        });
 
             LServidor = new JLabel("Servidor:");
             LServidor.setPreferredSize(new Dimension(50 , 50));
@@ -92,7 +123,7 @@ public class Login {
 
             container_area = new JPanel();
             container_area.add(panelCampos, BorderLayout.CENTER); // Campos no centro
-            //container_area.add(conectar, BorderLayout.SOUTH);     // Botão no sul
+
 
             janela.setLayout(new BorderLayout());
             janela.add(abas, BorderLayout.NORTH);           // Abas no topo
@@ -152,6 +183,9 @@ public class Login {
             //panelCampos.add(cbx , BorderLayout.SOUTH);
             janela.pack();
             janela.setVisible(true);
+
+            System.out.println(janela.getHeight() + "é a altura");
+            System.out.println(janela.getWidth() + "é a largura");
         }
 
         catch(SQLException erro){
@@ -167,5 +201,11 @@ public class Login {
             System.out.println("Não entra no if para montar com o combo box");
         }
 
+    }
+
+    public static Component mostrarLivros(){
+        Livros sla = new Livros();
+        sla.realizarTudo();
+        return null;
     }
 }
