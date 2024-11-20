@@ -52,6 +52,10 @@ public class Login {
             usuario = new JTextField(10);
             senha = new JTextField(10);
 
+            cbx = new JComboBox();
+            cbx.setPreferredSize(new Dimension(100 , 25));
+            cbx.setEnabled(false);
+
             conectar = new JButton("Conectar");
             conectar.addActionListener(new ActionListener() {
                 @Override
@@ -81,6 +85,7 @@ public class Login {
             panelCampos.add(LSenha,BorderLayout.CENTER);
             panelCampos.add(senha,BorderLayout.CENTER);
             panelCampos.add(conectar , BorderLayout.SOUTH);
+            panelCampos.add(cbx , BorderLayout.CENTER);
 
 
             // painel principal para organizar campos e botão
@@ -113,7 +118,7 @@ public class Login {
             }
         }
 
-    public static void montarComCbx() throws SQLException {
+    public static void depoisLogin() throws SQLException {
         String[] opcoes;
         int quantasBibliotecas = 0;
 
@@ -132,14 +137,19 @@ public class Login {
             resultadoSelect.beforeFirst();
 
             int i = 0;
-            while (resultadoSelect.next()){
+            while (resultadoSelect.next()){ // coloca os elementos do select em um vetor
                 opcoes[i] = resultadoSelect.getString("nome");
                 i++;
             }
-            cbx = new JComboBox<>(opcoes);
-            cbx.setPreferredSize(new Dimension(100 , 25));
+
+            for (int x = 0 ; x < quantasBibliotecas ; x++){
+                String bibliotecaAtual = opcoes[x];
+                cbx.addItem(bibliotecaAtual);
+            }
+
+            cbx.setEnabled(true);
             abas.setEnabled(true);
-            panelCampos.add(cbx , BorderLayout.SOUTH);
+            //panelCampos.add(cbx , BorderLayout.SOUTH);
             janela.pack();
             janela.setVisible(true);
         }
@@ -151,7 +161,7 @@ public class Login {
 
     public static void verificar() throws SQLException{
         if (conexao != null){
-            montarComCbx();
+            depoisLogin();
         }
         else{
             System.out.println("Não entra no if para montar com o combo box");
