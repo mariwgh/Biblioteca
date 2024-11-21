@@ -1,9 +1,14 @@
 package src;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLOutput;
 import java.sql.Statement;
 
 public class Livros {
@@ -20,22 +25,53 @@ public class Livros {
     public static void montar(){
         JPanel panelCampos;
 
-        String[] opcoes = new String[]{"INCLUIR" , "DELETAR" , "INSERIR" , "BUSCAR"};
+        String[] opcoes = new String[]{"INCLUIR" , "DELETAR" , "ALTERAR" , "BUSCAR"};
 
         operacao = new JComboBox(opcoes);
         operacao.setPreferredSize(new Dimension(100 , 25));
 
 
-        /*realizar = new JButton("REALIZAR");
+        realizar = new JButton("REALIZAR");
         realizar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //realizar a função escolhida no cbx, pegar os dados
                 //dos campos do formulario e fazer a consulta
+                String funcao = operacao.getSelectedItem().toString();
+                switch (funcao){
+                    case "INCLUIR":
+                        //PASSAR COMO PARAMETRO O INSERT INTO COM OS DADOS
+                    case "DELETAR":
+                        try {
+                            Statement comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                            ResultSet resultadoDoSelect = comandoSql.executeQuery("delete * from SisBid.Livro where titulo='" + inpTitulo.getText() + "'");
+                            if (resultadoDoSelect != null){
+                                System.out.println("Registro excluído com sucesso!");
+                            }
+                            else{
+                                System.out.println("Deu erro na exclusão");
+                            }
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+
+                    case "ALTERAR":
+
+                    case "BUSCAR":
+
+                }
+            }
+        });
+
+        /*voltar = new JButton("VOLTAR");
+        voltar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Login objeto = new Login();
+                objeto.getPanel();
+                //objeto.janela.dispose();    // fecha a janela
             }
         });*/
-
-        voltar = new JButton("VOLTAR");
 
 
         selecionar = new JButton("SELECIONAR");
@@ -121,12 +157,8 @@ public class Livros {
         }
         else if(operacao.getSelectedItem().toString() == "EXCLUIR"){
             System.out.println("A operação selecionada foi excluir!");
-            JLabel LId = new JLabel("Digite o id do livro: ");
             JLabel LTitulo = new JLabel("Digite o título do livro: ");
-            inpId = new JTextField(10);
             inpTitulo = new JTextField(10);
-            container.add(LId);
-            container.add(inpId);
             container.add(LTitulo);
             container.add(inpTitulo);
             //depois fazer um if para ver se algum JTExtielf está vazio

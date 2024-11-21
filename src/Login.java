@@ -6,6 +6,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BaseMultiResolutionImage;
 import java.sql.*;
 /*
 import java.sql.Statement;		// permite criar um objeto de execução de comandos no servidor
@@ -97,7 +98,7 @@ public class Login {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        getConnection(servidor.getText() , banco_de_dados.getText() , usuario.getText() , senha.getText());
+                        getConnection();
                         if(conexao != null){
                             System.out.println("Deu certo!");
                             verificar();
@@ -148,7 +149,7 @@ public class Login {
             container_area = new JPanel();
             container_area.add(panelCampos, BorderLayout.CENTER); // Campos no centro
 
-
+            janela.setTitle("Login ao BD");
             janela.setLayout(new BorderLayout());
             janela.add(abas, BorderLayout.NORTH);           // Abas no topo
             janela.add(container_area); // Painel principal no centro
@@ -157,20 +158,9 @@ public class Login {
             janela.setVisible(true);
         }
 
-        //passar isso tudo para uma classe separada
-        public static void getConnection(String servidorText , String bdText , String usuarioText , String senhaText) throws SQLException{
-            //escrever a função para conectar ao bd aqui;
-            if (servidorText != ""){
-                String URL =
-                        "jdbc:sqlserver://" + servidorText + ":1433;databaseName="+ bdText +
-                                ";integratedSecurity=false;encrypt=false;trustServerCertificate=true";
-                try{
-                    conexao = DriverManager.getConnection(URL , usuarioText , senhaText);
-                }
-                catch(SQLException erro){
-                    System.out.println(erro.getMessage());
-                }
-            }
+        public static void getConnection() throws SQLException {
+            BancoDeDados obj = new BancoDeDados();
+            conexao = obj.getConnection(senha.getText() , usuario.getText() , banco_de_dados.getText() , servidor.getText());
         }
 
     public static void depoisLogin() throws SQLException {
@@ -237,14 +227,20 @@ public class Login {
     }
 
     public static Component mostrarLivros() throws Exception{    //  só retorna Component porque o JTabbed precasa que esse método retorne um componente
-        Livros sla = new Livros();
+        Livros objetoLivro = new Livros();
         container_area.removeAll();
         //janela.removeAll();
-        JPanel painelLivros = sla.realizarTudo();
+        JPanel painelLivros = objetoLivro.realizarTudo();
         container_area.add(painelLivros , BorderLayout.CENTER);
+        container_area.add(cbx , BorderLayout.SOUTH);
         janela.add(container_area);
         janela.pack();
         return null;
+    }
+
+    public static JPanel getPanel(){
+        montar();
+        return container_area;
     }
 
 }
