@@ -3,6 +3,7 @@ package src;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +16,7 @@ public class Livros {
     public static int idBibliotecaEscolhida;
     public static JPanel container , painelCampos;
     public static JTextField inpId, inpTitulo , inpAutor , inpArea;
+    public static JTable tabelaResultadoSql;
 
    /* public static void main(String[] args){
         montar();
@@ -60,7 +62,6 @@ public class Livros {
         panelCampos.add(selecionar , BorderLayout.NORTH);
         panelCampos.add(operacao , BorderLayout.NORTH);
 
-
         // painel principal para organizar campos e botão
 
         container = new JPanel();
@@ -87,6 +88,7 @@ public class Livros {
             JLabel titulo = new JLabel("Digite o título do livro: ");
             if (painelCampos != null){
                 painelCampos.removeAll();
+
             }
             painelCampos.add(id);
             painelCampos.add(inpId);
@@ -219,6 +221,10 @@ public class Livros {
                     //tem q fzr o where idBiblioteca
                     comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                     ResultSet resultadoDoSelect = comandoSql.executeQuery("select * from SisBib.Livro");        //tem que fazer um where do idBiblioteca
+
+                    String[] colunas = new String[]{"codLivro" , "titulo" , "idAutor" , "idArea"};
+                    DefaultTableModel modelo = new DefaultTableModel(resultadoDoSelect, colunas);
+                    tabelaResultadoSql = new JTable(modelo);
                     if (resultadoDoSelect != null){
                         System.out.println("Deu certo a busca");
                     }else{
