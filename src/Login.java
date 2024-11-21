@@ -63,7 +63,7 @@ public class Login {
                     try {
                         mostrarLivros();
                     } catch (Exception ex) {
-                        throw new RuntimeException(ex);
+                        System.out.println(ex.getMessage());
                     }
                 } else if (index == 1) {
                     System.out.println("Redirecionando para Exemplares...");

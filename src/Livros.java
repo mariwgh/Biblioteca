@@ -6,17 +6,14 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLOutput;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Livros {
 
     public static JComboBox operacao;
     public static JButton realizar , voltar , selecionar;
     public static int idBibliotecaEscolhida;
-    public static JPanel container;
+    public static JPanel container , painelCampos;
     public static JTextField inpId, inpTitulo , inpAutor , inpArea;
 
    /* public static void main(String[] args){
@@ -37,65 +34,9 @@ public class Livros {
             public void actionPerformed(ActionEvent e) {
                 //realizar a função escolhida no cbx, pegar os dados
                 //dos campos do formulario e fazer a consulta
-                String funcao = operacao.getSelectedItem().toString();
-                Statement comandoSql;
-                switch (funcao){
-                    case "INCLUIR":
-                        //PASSAR COMO PARAMETRO O INSERT INTO COM OS DADOS
-                    case "DELETAR":
-                        try {
-                            comandoSql   = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                            ResultSet resultadoDoSelect = comandoSql.executeQuery("delete * from SisBid.Livro where titulo='" + inpTitulo.getText() + "'");
-                            if (resultadoDoSelect != null){
-                                System.out.println("Registro excluído com sucesso!");
-                            }
-                            else{
-                                System.out.println("Deu erro na exclusão");
-                            }
-                        }
-                        catch (SQLException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    case "ALTERAR":
-                        try {
-                            //só funciona para alterar a area pegando o titulo
-                            comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                            ResultSet resultadoDoSelect = comandoSql.executeQuery("alter SisBib.Livro set idArea=" + Integer.parseInt(inpArea.getText()) + "where titulo = '" + inpTitulo.getText() + "'");
-                            if (resultadoDoSelect != null){
-                                System.out.println("Deu certo a alteração");
-                            }
-                        }
-                        catch (SQLException ex) {
-                            throw new RuntimeException(ex);
-                        }
-
-                    case "BUSCAR":
-                        try{
-                            //só funciona com a busca geral, mostra tudo
-                            comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                            ResultSet resultadoDoSelect = comandoSql.executeQuery("select * from SisBib.Livro where i");
-                            if (resultadoDoSelect != null){
-                                System.out.println("Deu certo a busca");
-                            }
-                        }
-                        catch (SQLException erro){
-                            throw new RuntimeException();
-                        }
-
-                }
+                consultas();
             }
         });
-
-        /*voltar = new JButton("VOLTAR");
-        voltar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Login objeto = new Login();
-                objeto.getPanel();
-                //objeto.janela.dispose();    // fecha a janela
-            }
-        });*/
-
 
         selecionar = new JButton("SELECIONAR");
         selecionar.addActionListener(new ActionListener() {
@@ -114,19 +55,18 @@ public class Livros {
 
         // Criar um painel interno para os campos de texto e labels
         panelCampos = new JPanel();
-        //panelCampos.add(realizar , BorderLayout.NORTH);
-        panelCampos.add(voltar , BorderLayout.NORTH);
+        panelCampos.add(realizar , BorderLayout.NORTH);
+        //panelCampos.add(voltar , BorderLayout.NORTH);
         panelCampos.add(selecionar , BorderLayout.NORTH);
         panelCampos.add(operacao , BorderLayout.NORTH);
 
 
         // painel principal para organizar campos e botão
 
-        container= new JPanel();
+        container = new JPanel();
         container.setLayout(new GridLayout(2 , 4 , 5 , 5));
         container.add(panelCampos, BorderLayout.NORTH); // Campos no centro
         container.add(Box.createVerticalStrut(15));
-
 }
 
     public static void setIdBibliotecaEscolhida(Login id){
@@ -136,6 +76,7 @@ public class Livros {
     }
 
     public static void mostrarInputs(){
+        painelCampos = new JPanel();
         if (operacao.getSelectedItem().toString() == "BUSCAR"){
             inpId = new JTextField(10);
             inpTitulo = new JTextField(10);
@@ -144,10 +85,14 @@ public class Livros {
             System.out.println("A operação selecionada foi buscar!");
             JLabel id = new JLabel("Digite o id do livro: ");
             JLabel titulo = new JLabel("Digite o título do livro: ");
-            container.add(id);
-            container.add(inpId);
-            container.add(titulo);
-            container.add(inpTitulo);
+            if (painelCampos != null){
+                painelCampos.removeAll();
+            }
+            painelCampos.add(id);
+            painelCampos.add(inpId);
+            painelCampos.add(titulo);
+            painelCampos.add(inpTitulo);
+            container.add(painelCampos);
         }
         else if (operacao.getSelectedItem().toString() == "INCLUIR") {
             inpId = new JTextField(10);
@@ -160,9 +105,10 @@ public class Livros {
             JLabel idAutor = new JLabel("Digite o id do autor: ");
             JLabel idArea = new JLabel("Digite o id da área que o livro pertence: ");
 
-            JPanel painelCampos = new JPanel();
-
             painelCampos.setLayout(new GridLayout(4 , 2 , 5 , 5));  //deixa ele parecendo um formulário
+            if (painelCampos != null){
+                painelCampos.removeAll();
+            }
 
             painelCampos.add(id);
             painelCampos.add(inpId);
@@ -178,12 +124,17 @@ public class Livros {
             //tem que alinhar esses elementos no meio da janela
             //NAO TA FICANDO *EMOJI BRAVO*
         }
-        else if(operacao.getSelectedItem().toString() == "EXCLUIR"){
+
+        else if(operacao.getSelectedItem().toString() == "DELETAR"){
             System.out.println("A operação selecionada foi excluir!");
             JLabel LTitulo = new JLabel("Digite o título do livro: ");
             inpTitulo = new JTextField(10);
-            container.add(LTitulo);
-            container.add(inpTitulo);
+            if (painelCampos != null){
+                painelCampos.removeAll();
+            }
+            painelCampos.add(LTitulo);
+            painelCampos.add(inpTitulo);
+            container.add(painelCampos);
             //depois fazer um if para ver se algum JTExtielf está vazio
             //e fazer o select com bases nos que estão preenchidos
         }
@@ -218,8 +169,67 @@ public class Livros {
         return container;
     }
 
-    public static Statement realizarSelect(){
-        return null;
+    public static void consultas(){
+        String funcao = operacao.getSelectedItem().toString();
+        Statement comandoSql;
+        switch (funcao){
+            case "INCLUIR":
+                //PASSAR COMO PARAMETRO O INSERT INTO COM OS DADOS
+                String sql = "INSERT INTO SisBib.Livro values (? , ? , ? , ?)";
+                try {
+                    PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
+                    preparedStatement.setInt(1 , Integer.parseInt(inpId.getText()));  //muda o primeiro '?'
+                    preparedStatement.setString(2 , inpTitulo.getText());   //  muda o segundi '?'
+                    preparedStatement.setInt(3 , Integer.parseInt(inpAutor.getText()));
+                    int linhasAfetadas = preparedStatement.executeUpdate();
+                    System.out.println("Linhas afetadas: " + linhasAfetadas);
+                }
+                catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                break;
+            case "DELETAR":
+                sql = "delete *  from SisBib.Livro where titulo= ?";
+                try {
+                    PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
+                    preparedStatement.setString(1 , inpTitulo.getText());
+                    int linhasAfetadas = preparedStatement.executeUpdate();
+                    System.out.println("Linhas afetadas: " + linhasAfetadas);
+                }
+                catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                break;
+            case "ALTERAR":
+                sql = "update SisBib.Livro set idArea = ? where titulo = ?";
+                try {
+                    PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
+                    preparedStatement.setInt(1 , Integer.parseInt(inpArea.getText()));
+                    preparedStatement.setString(2 , inpTitulo.getText());
+                    int linhasAfetadas = preparedStatement.executeUpdate();
+                    System.out.println("Linhas afetadas: " + linhasAfetadas);
+                }
+                catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                break;
+            case "BUSCAR":
+                try{
+                    //só funciona com a busca geral, mostra tudo
+                    //tem q fzr o where idBiblioteca
+                    comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    ResultSet resultadoDoSelect = comandoSql.executeQuery("select * from SisBib.Livro");        //tem que fazer um where do idBiblioteca
+                    if (resultadoDoSelect != null){
+                        System.out.println("Deu certo a busca");
+                    }else{
+                        System.out.println("Deu errado!");
+                    }
+                }
+                catch (SQLException erro){
+                    throw new RuntimeException();
+                }
+
+        }
     }
 
 }
