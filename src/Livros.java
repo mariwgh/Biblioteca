@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Statement;
 
 public class Livros {
 
@@ -11,96 +12,128 @@ public class Livros {
     public static JButton realizar , voltar , selecionar;
     public static int idBibliotecaEscolhida;
     public static JPanel container;
-    public static JTextField InpId , InpTitulo;
+    public static JTextField inpId, inpTitulo , inpAutor , inpArea;
 
    /* public static void main(String[] args){
         montar();
     }*/
-
     public static void montar(){
+        JPanel panelCampos;
+
+        String[] opcoes = new String[]{"INCLUIR" , "DELETAR" , "INSERIR" , "BUSCAR"};
+
+        operacao = new JComboBox(opcoes);
+        operacao.setPreferredSize(new Dimension(100 , 25));
 
 
+        /*realizar = new JButton("REALIZAR");
+        realizar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //realizar a função escolhida no cbx, pegar os dados
+                //dos campos do formulario e fazer a consulta
+            }
+        });*/
 
-        InpTitulo = new JTextField();
-        InpId = new JTextField();   // inicializar
+        voltar = new JButton("VOLTAR");
 
-        container = new JPanel();
-        container.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10)); // 10px de espaçamento entre os componentes
-        realizar = new JButton();
-        realizar.setText("REALIZAR");
 
-        voltar = new JButton();
-        voltar.setText("VOLTAR");
-
-        selecionar = new JButton();
-        selecionar.setText("SELECIONAR");
+        selecionar = new JButton("SELECIONAR");
         selecionar.addActionListener(new ActionListener() {
-             @Override
-             public void actionPerformed(ActionEvent e) {
-                 mostrarInputs();
-             }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    mostrarInputs();
+                }
+                catch (Exception erro){
+                    System.out.println(erro.getMessage());
+                }
+
+            }
         });
 
-        String[] acoes;
-        acoes = new String[]{"Buscar", "Incluir", "Excluir", "Alterar"};
 
-        operacao = new JComboBox<>(acoes);
+        // Criar um painel interno para os campos de texto e labels
+        panelCampos = new JPanel();
+        //panelCampos.add(realizar , BorderLayout.NORTH);
+        panelCampos.add(voltar , BorderLayout.NORTH);
+        panelCampos.add(selecionar , BorderLayout.NORTH);
+        panelCampos.add(operacao , BorderLayout.NORTH);
 
-        JPanel panelCampos = new JPanel();
-        //panelCampos.setLayout(new GridLayout(2 ,4, 5, 5)); // 5 linhas, 2 c
-        panelCampos.setPreferredSize(new Dimension(699 , 414));
-        panelCampos.add(operacao , BorderLayout.SOUTH);
-        panelCampos.add(realizar, BorderLayout.SOUTH);  //ALGUEM MANDA ELES IREM PARA O SUL CARA
-        panelCampos.add(voltar, BorderLayout.SOUTH);
-        panelCampos.add(selecionar, BorderLayout.SOUTH);
 
-        container.add(panelCampos , BorderLayout.CENTER);
-    }
+        // painel principal para organizar campos e botão
+
+        container= new JPanel();
+        container.setLayout(new GridLayout(2 , 4 , 5 , 5));
+        container.add(panelCampos, BorderLayout.NORTH); // Campos no centro
+        container.add(Box.createVerticalStrut(15));
+
+}
 
     public static void setIdBibliotecaEscolhida(Login id){
         idBibliotecaEscolhida = Integer.parseInt(id.toString());
+        // AQUI VAI TER QUE FAZER UM WHERE COM O ID DA BIBLIOTECA SELECIONADA
+        // EM TUDO QUE FOR FAZER
     }
 
     public static void mostrarInputs(){
-        if (operacao.getSelectedItem().toString() == "Buscar"){
+        if (operacao.getSelectedItem().toString() == "BUSCAR"){
+            inpId = new JTextField(10);
+            inpTitulo = new JTextField(10);
+            inpAutor = new JTextField(10);
+            inpArea = new JTextField(10);
+            System.out.println("A operação selecionada foi buscar!");
             JLabel id = new JLabel("Digite o id do livro: ");
             JLabel titulo = new JLabel("Digite o título do livro: ");
             container.add(id);
-            container.add(InpId);
+            container.add(inpId);
             container.add(titulo);
-            container.add(InpTitulo);
+            container.add(inpTitulo);
         }
-        else if (operacao.getSelectedItem().toString() == "Incluir") {
+        else if (operacao.getSelectedItem().toString() == "INCLUIR") {
+            inpId = new JTextField(10);
+            inpTitulo = new JTextField(10);
+            inpAutor = new JTextField(10);
+            inpArea = new JTextField(10);
+            System.out.println("A operação selecionada foi incluir!");
             JLabel id = new JLabel("Digite o id do livro: ");
             JLabel titulo = new JLabel("Digite o título do livro: ");
             JLabel idAutor = new JLabel("Digite o id do autor: ");
             JLabel idArea = new JLabel("Digite o id da área que o livro pertence: ");
-            JTextField inputid = new JTextField();
-            JTextField inputtitulo = new JTextField();
-            JTextField inputautor = new JTextField();
-            JTextField inputarea = new JTextField();
-            container.add(id);
-            container.add(inputid);
-            container.add(titulo);
-            container.add(inputtitulo);
-            container.add(idAutor);
-            container.add(inputautor);
-            container.add(idArea);
-            container.add(inputarea);
+
+            JPanel painelCampos = new JPanel();
+
+            painelCampos.setLayout(new GridLayout(4 , 2 , 5 , 5));  //deixa ele parecendo um formulário
+
+            painelCampos.add(id);
+            painelCampos.add(inpId);
+            painelCampos.add(titulo);
+            painelCampos.add(inpTitulo);
+            painelCampos.add(idAutor);
+            painelCampos.add(inpAutor);
+            painelCampos.add(idArea);
+            painelCampos.add(inpArea);
+
+            container.add(new JPanel());
+            container.add(painelCampos ,BorderLayout.CENTER);
+            //tem que alinhar esses elementos no meio da janela
+            //NAO TA FICANDO *EMOJI BRAVO*
         }
-        else if(operacao.getSelectedItem().toString() == "Excluir"){
+        else if(operacao.getSelectedItem().toString() == "EXCLUIR"){
+            System.out.println("A operação selecionada foi excluir!");
             JLabel LId = new JLabel("Digite o id do livro: ");
             JLabel LTitulo = new JLabel("Digite o título do livro: ");
-            JTextField id = new JTextField();
-            JTextField titulo = new JTextField();
+            inpId = new JTextField(10);
+            inpTitulo = new JTextField(10);
             container.add(LId);
-            container.add(id);
+            container.add(inpId);
             container.add(LTitulo);
-            container.add(titulo);
+            container.add(inpTitulo);
             //depois fazer um if para ver se algum JTExtielf está vazio
             //e fazer o select com bases nos que estão preenchidos
         }
-        else if (operacao.getSelectedItem().toString() == "Alterar") {
+        else if (operacao.getSelectedItem().toString() == "ALTERAR") {
+            System.out.println("A operação selecionada foi alterar!");
             String[] dados = new String[]{"Id livro" , "Título" , "Id autor" , "Id área"};
             JLabel whereAntigo = new JLabel("Qual é o dado de referência?");
             JComboBox cbxAntigo = new JComboBox(dados);
@@ -123,11 +156,15 @@ public class Livros {
         }
     }
 
-    public static JPanel realizarTudo(){
+    public static JPanel realizarTudo() throws Exception{
         montar();
-        container.setLayout(new FlowLayout(FlowLayout.LEFT)); // Alinha os componentes à esquerda de maneira compacta
-        container.setSize(300,200); // Limita o tamanho do painel
+        //container.setLayout(new FlowLayout(FlowLayout.LEFT)); // Alinha os componentes à esquerda de maneira compacta
+        //container.setSize(300,200); // Limita o tamanho do painel
         return container;
+    }
+
+    public static Statement realizarSelect(){
+        return null;
     }
 
 }

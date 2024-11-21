@@ -25,8 +25,9 @@ public class Login {
     public static JFrame janela;
     public static JPanel container_area;
     public static JTabbedPane abas;
-    public static JTextField servidor, banco_de_dados , usuario , senha;
-    public static JButton conectar;
+    public static JTextField servidor, banco_de_dados , usuario;
+    public static JPasswordField senha;
+    public static JButton conectar , verSenha;
     public static JLabel LServidor , LBD , LUsuario , LSenha;
     public static JComboBox cbx;
     public static Connection conexao;
@@ -44,12 +45,12 @@ public class Login {
             janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             abas = new JTabbedPane();
-            abas.addTab("Livros", mostrarLivros());
+            abas.addTab("Livros", new JPanel());
             abas.addTab("Exemplares", new JPanel());
             abas.addTab("Empréstimos", new JPanel());
             abas.addTab("Devoluções", new JPanel());
             abas.setEnabled(false);
-        abas.addChangeListener(new ChangeListener() {
+            abas.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 int index = abas.getSelectedIndex();  // Obtém o índice da aba selecionada
@@ -58,7 +59,11 @@ public class Login {
                 // Ações baseadas na aba selecionada
                 if (index == 0) {
                     System.out.println("Redirecionando para Livros...");
-                    mostrarLivros();
+                    try {
+                        mostrarLivros();
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
                 } else if (index == 1) {
                     System.out.println("Redirecionando para Exemplares...");
                     //mostrarExemplares();
@@ -81,7 +86,7 @@ public class Login {
             servidor = new JTextField(30);
             banco_de_dados = new JTextField(20);
             usuario = new JTextField(10);
-            senha = new JTextField(10);
+            senha = new JPasswordField(10);
 
             cbx = new JComboBox();
             cbx.setPreferredSize(new Dimension(100 , 25));
@@ -104,9 +109,27 @@ public class Login {
                 }
             });
 
+            verSenha = new JButton("Mostrar");
+            //verSenha.setPreferredSize(new Dimension(4 , 5));
+            verSenha.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (senha.getEchoChar() == '•'){
+                        senha.setEchoChar((char)0); //nao entendi mas é
+                        verSenha.setText("Mostrar");
+                    }
+                    else{
+                        senha.setEchoChar('•');
+                        verSenha.setText("Ocultar");
+                    }
+
+                }
+            });
+
+
             // Criar um painel interno para os campos de texto e labels
             panelCampos = new JPanel();
-            panelCampos.setLayout(new GridLayout(5 ,2, 5, 5)); // 4 linhas, 2 colunas, espaçamento 5px
+            panelCampos.setLayout(new GridLayout(6 ,2, 5, 5)); // 4 linhas, 2 colunas, espaçamento 5px
             panelCampos.add(LServidor, BorderLayout.CENTER);
             panelCampos.add(servidor, BorderLayout.CENTER);
             panelCampos.add(LBD, BorderLayout.CENTER);
@@ -117,6 +140,7 @@ public class Login {
             panelCampos.add(senha,BorderLayout.CENTER);
             panelCampos.add(conectar , BorderLayout.SOUTH);
             panelCampos.add(cbx , BorderLayout.CENTER);
+            panelCampos.add(verSenha , BorderLayout.SOUTH);
 
 
             // painel principal para organizar campos e botão
@@ -133,7 +157,7 @@ public class Login {
             janela.setVisible(true);
         }
 
-
+        //passar isso tudo para uma classe separada
         public static void getConnection(String servidorText , String bdText , String usuarioText , String senhaText) throws SQLException{
             //escrever a função para conectar ao bd aqui;
             if (servidorText != ""){
@@ -193,6 +217,15 @@ public class Login {
         }
     }
 
+    //talvez colocar isso em uma outra classe seja melhor!
+    public static ResultSet realizarSQL() throws SQLException {
+        Statement comandoSQL = conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        resultadoSelect = comandoSQL.executeQuery("select nome from SisBib.Biblioteca");    //aqui vai receber como parâmetro a consulta desejada
+        //cuidar depois do SQLInjection
+        return resultadoSelect;
+
+    }
+
     public static void verificar() throws SQLException{
         if (conexao != null){
             depoisLogin();
@@ -203,9 +236,15 @@ public class Login {
 
     }
 
-    public static Component mostrarLivros(){
+    public static Component mostrarLivros() throws Exception{    //  só retorna Component porque o JTabbed precasa que esse método retorne um componente
         Livros sla = new Livros();
-        sla.realizarTudo();
+        container_area.removeAll();
+        //janela.removeAll();
+        JPanel painelLivros = sla.realizarTudo();
+        container_area.add(painelLivros , BorderLayout.CENTER);
+        janela.add(container_area);
+        janela.pack();
         return null;
     }
+
 }
