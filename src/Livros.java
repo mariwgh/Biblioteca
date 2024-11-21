@@ -65,7 +65,7 @@ public class Livros {
         // painel principal para organizar campos e botão
 
         container = new JPanel();
-        container.setLayout(new GridLayout(2 , 4 , 5 , 5));
+        container.setLayout(new GridLayout(5 , 4 , 5 , 5));
         container.add(panelCampos, BorderLayout.NORTH); // Campos no centro
         container.add(Box.createVerticalStrut(15));
 }
@@ -180,7 +180,7 @@ public class Livros {
                 String sql = "INSERT INTO SisBib.Livro values (? , ? , ? , ?)";
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
-                    preparedStatement.setInt(1 , Integer.parseInt(inpId.getText()));  //muda o primeiro '?'
+                    preparedStatement.setString(1 , inpId.getText());  //muda o primeiro '?'
                     preparedStatement.setString(2 , inpTitulo.getText());   //  muda o segundi '?'
                     preparedStatement.setInt(3 , Integer.parseInt(inpAutor.getText()));
                     int linhasAfetadas = preparedStatement.executeUpdate();
@@ -217,22 +217,56 @@ public class Livros {
                 break;
             case "BUSCAR":
                 try{
+                    int linhas = 0;
                     //só funciona com a busca geral, mostra tudo
                     //tem q fzr o where idBiblioteca
                     comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                     ResultSet resultadoDoSelect = comandoSql.executeQuery("select * from SisBib.Livro");        //tem que fazer um where do idBiblioteca
-
-                    String[] colunas = new String[]{"codLivro" , "titulo" , "idAutor" , "idArea"};
-                    DefaultTableModel modelo = new DefaultTableModel(resultadoDoSelect, colunas);
-                    tabelaResultadoSql = new JTable(modelo);
                     if (resultadoDoSelect != null){
-                        System.out.println("Deu certo a busca");
-                    }else{
-                        System.out.println("Deu errado!");
+                        while(resultadoDoSelect.next()){      //conta quantas linhas tem o resultado
+                            System.out.println(resultadoDoSelect.getInt("idArea")); //ELE TA PEGANDO AQUI
+                            linhas +=1;
+                        }
+
+                        String[] colunas = new String[]{"codLivro" , "titulo" , "idAutor" , "idArea"};
+                        String[][] resultadoSQL = new String[linhas][4]; //com x linhas e cada linha tem 4 campos (colunas)
+
+                        resultadoDoSelect.beforeFirst();        //volta para o inicio para guardar os dados no resultadoSQL
+
+                        for (int i = 0 ; i < linhas ; i++){
+                            resultadoSQL[i][0] = Integer.toString(resultadoDoSelect.getInt("codLivro"));
+                            System.out.println(Integer.toString(resultadoDoSelect.getInt("codLivro")));
+                            resultadoSQL[i][1] = resultadoDoSelect.getString("titulo");
+                            resultadoSQL[i][2] = Integer.toString(resultadoDoSelect.getInt("idAutor"));
+                            resultadoSQL[i][3] = Integer.toString(resultadoDoSelect.getInt("idArea"));
+                        }
+
+                        DefaultTableModel modelo = new DefaultTableModel(resultadoSQL, colunas);
+                        tabelaResultadoSql = new JTable(modelo);
+                        if (tabelaResultadoSql != null){
+                            System.out.println("A tabela tem coisa");
+                        }
+                        else{
+                            System.out.println("tabela nao está guardando dados");
+                        }
+                        container.add(tabelaResultadoSql);
+                        container.setVisible(true);
+
+                        if (resultadoDoSelect != null){
+                            System.out.println("Deu certo a busca");
+                        }
+                        else{
+                            System.out.println("Deu errado!");
+                        }
                     }
+                    else{
+                        System.out.println("o resultado está dando nulo");
+                    }
+
+
                 }
                 catch (SQLException erro){
-                    throw new RuntimeException();
+                    System.out.println(erro.getMessage());;
                 }
 
         }

@@ -85,6 +85,7 @@ public class Login {
             LSenha = new JLabel("Senha:");
 
             servidor = new JTextField(30);
+            servidor.setText("regulus");
             banco_de_dados = new JTextField(20);
             usuario = new JTextField(10);
             senha = new JPasswordField(10);

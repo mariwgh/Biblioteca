@@ -46,5 +46,18 @@
         <jarDirectory url="file://$USER_HOME$/Downloads/sqljdbc_12.8.1.0_ptb/sqljdbc_12.8/ptb/jars" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$USER_HOME$/Downloads/sqljdbc_12.8/enu/jars" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$USER_HOME$/Downloads/sqljdbc_12.8/enu/jars" />
+        </SOURCES>
+        <jarDirectory url="file://$USER_HOME$/Downloads/sqljdbc_12.8/enu/jars" recursive="false" />
+        <jarDirectory url="file://$USER_HOME$/Downloads/sqljdbc_12.8/enu/jars" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
   </component>
 </module>
