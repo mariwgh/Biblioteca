@@ -38,12 +38,13 @@ public class Livros {
                 //realizar a função escolhida no cbx, pegar os dados
                 //dos campos do formulario e fazer a consulta
                 String funcao = operacao.getSelectedItem().toString();
+                Statement comandoSql;
                 switch (funcao){
                     case "INCLUIR":
                         //PASSAR COMO PARAMETRO O INSERT INTO COM OS DADOS
                     case "DELETAR":
                         try {
-                            Statement comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                            comandoSql   = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                             ResultSet resultadoDoSelect = comandoSql.executeQuery("delete * from SisBid.Livro where titulo='" + inpTitulo.getText() + "'");
                             if (resultadoDoSelect != null){
                                 System.out.println("Registro excluído com sucesso!");
@@ -51,13 +52,35 @@ public class Livros {
                             else{
                                 System.out.println("Deu erro na exclusão");
                             }
-                        } catch (SQLException ex) {
+                        }
+                        catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    case "ALTERAR":
+                        try {
+                            //só funciona para alterar a area pegando o titulo
+                            comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                            ResultSet resultadoDoSelect = comandoSql.executeQuery("alter SisBib.Livro set idArea=" + Integer.parseInt(inpArea.getText()) + "where titulo = '" + inpTitulo.getText() + "'");
+                            if (resultadoDoSelect != null){
+                                System.out.println("Deu certo a alteração");
+                            }
+                        }
+                        catch (SQLException ex) {
                             throw new RuntimeException(ex);
                         }
 
-                    case "ALTERAR":
-
                     case "BUSCAR":
+                        try{
+                            //só funciona com a busca geral, mostra tudo
+                            comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                            ResultSet resultadoDoSelect = comandoSql.executeQuery("select * from SisBib.Livro where i");
+                            if (resultadoDoSelect != null){
+                                System.out.println("Deu certo a busca");
+                            }
+                        }
+                        catch (SQLException erro){
+                            throw new RuntimeException();
+                        }
 
                 }
             }
