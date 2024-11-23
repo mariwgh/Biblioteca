@@ -261,6 +261,7 @@ public class Livros {
 
                             DefaultTableModel modelo = new DefaultTableModel(resultadoSQL, colunas);
                             tabelaResultadoSql = new JTable(modelo);
+                            tabelaResultadoSql.setVisible(true);
                             /*if (tabelaResultadoSql != null){
                                 System.out.println("A tabela tem coisa");
                             }
@@ -390,6 +391,7 @@ public class Livros {
                             }
                             container.add(tabelaResultadoSql);
                             container.setVisible(true);
+                            //Login.janela.pack();
 
                             if (resultadoDoSelect != null){
                                 System.out.println("Deu certo a busca");

@@ -232,6 +232,7 @@ public class Login {
         //janela.removeAll();
         JPanel painelLivros = objetoLivro.realizarTudo();
         container_area.add(painelLivros , BorderLayout.CENTER);
+        janela.pack();
         container_area.add(cbx , BorderLayout.SOUTH);
         janela.add(container_area);
         janela.pack();
