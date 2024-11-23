@@ -127,8 +127,7 @@ public class Livros {
 
             container.add(new JPanel());
             container.add(painelCampos ,BorderLayout.CENTER);
-            //tem que alinhar esses elementos no meio da janela
-            //NAO TA FICANDO *EMOJI BRAVO*
+
         }
 
         else if(operacao.getSelectedItem().toString() == "DELETAR"){
@@ -220,17 +219,21 @@ public class Livros {
                 }
                 break;
             case "BUSCAR":
-                if (inpTitulo.getText() == "" && inpId.getText() == ""){
+                String id = inpId.getText();
+                String titulo = inpTitulo.getText();
+                //System.out.println(inpTitulo.getText());
+                //System.out.println(inpTitulo.getText());
+                if (titulo.equals("") && id.equals("")){
                     try{
 
                         int linhas = 0;
                         //só funciona com a busca geral, mostra tudo
                         //tem q fzr o where idBiblioteca
-                        comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                        comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);  //esses parâmetros permitem o 'cursor' voltar
                         ResultSet resultadoDoSelect = comandoSql.executeQuery("select * from SisBib.Livro");        //tem que fazer um where do idBiblioteca
                         if (resultadoDoSelect != null){
                             while(resultadoDoSelect.next()){      //conta quantas linhas tem o resultado
-                                System.out.println(resultadoDoSelect.getInt("idArea")); //ELE TA PEGANDO AQUI
+                                //System.out.println(resultadoDoSelect.getInt("idArea"));
                                 linhas +=1;
                             }
 
@@ -258,12 +261,13 @@ public class Livros {
 
                             DefaultTableModel modelo = new DefaultTableModel(resultadoSQL, colunas);
                             tabelaResultadoSql = new JTable(modelo);
-                            if (tabelaResultadoSql != null){
+                            /*if (tabelaResultadoSql != null){
                                 System.out.println("A tabela tem coisa");
                             }
                             else{
                                 System.out.println("tabela nao está guardando dados");
-                            }
+                            }*/
+
                             container.add(tabelaResultadoSql);
                             container.setVisible(true);
 
@@ -286,12 +290,12 @@ public class Livros {
 
                 }
                 else {
-                    if (inpTitulo.getText() == ""){ //se o usuario tiver digitado somente o id
+                    if (titulo.equals("")){ //se o usuario tiver digitado somente o id
                         int linhas = 0;
                         //só funciona com a busca geral, mostra tudo
                         //tem q fzr o where idBiblioteca
                         comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                        ResultSet resultadoDoSelect = comandoSql.executeQuery("select * from SisBib.Livro where codLivro = '" + inpId + "'");        //tem que fazer um where do idBiblioteca
+                        ResultSet resultadoDoSelect = comandoSql.executeQuery("select * from SisBib.Livro where codLivro = '" + inpId.getText() + "'");        //tem que fazer um where do idBiblioteca
                         if (resultadoDoSelect != null){
                             while(resultadoDoSelect.next()){      //conta quantas linhas tem o resultado
                                 System.out.println(resultadoDoSelect.getInt("idArea")); //ELE TA PEGANDO AQUI
@@ -342,8 +346,61 @@ public class Livros {
                             System.out.println("o resultado está dando nulo");
                         }
                     }
-                    else if (inpTitulo.getText() == "") {
+                    else if (id.equals("")) {   //usuario digitou somente o titulo
+                        int linhas = 0;
+                        //só funciona com a busca geral, mostra tudo
+                        //tem q fzr o where idBiblioteca
+                        comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                        ResultSet resultadoDoSelect = comandoSql.executeQuery("select * from SisBib.Livro where titulo = '" + inpTitulo.getText() + "'");        //tem que fazer um where do idBiblioteca
+                        if (resultadoDoSelect != null){
+                            while(resultadoDoSelect.next()){      //conta quantas linhas tem o resultado
+                                System.out.println(resultadoDoSelect.getInt("idArea")); //ELE TA PEGANDO AQUI
+                                linhas +=1;
+                            }
 
+                            linhas += 1;    //para colocar as colunas também
+
+                            String[] colunas = new String[]{"codLivro" , "titulo" , "idAutor" , "idArea"};
+                            String[][] resultadoSQL = new String[linhas][4]; //com x linhas e cada linha tem 4 campos (colunas)
+
+                            resultadoDoSelect.beforeFirst();        //volta para o inicio para guardar os dados no resultadoSQL
+
+                            resultadoSQL[0][0] = "Código";  //definir o "nome das colunas"
+                            resultadoSQL[0][1] = "Título";
+                            resultadoSQL[0][2] = "id Autor";
+                            resultadoSQL[0][3] = "id Área";
+
+                            for (int i = 1 ; i < linhas ; i++){
+                                resultadoDoSelect.next();
+                                //resultadoSQL[i][0] = resultadoDoSelect.getInt("codLivro");
+                                //System.out.println(Integer.toString(resultadoDoSelect.getInt("codLivro")));
+                                resultadoSQL[i][0] = resultadoDoSelect.getString("codLivro");
+                                resultadoSQL[i][1] = resultadoDoSelect.getString("titulo");
+                                resultadoSQL[i][2] = resultadoDoSelect.getString("idAutor");
+                                resultadoSQL[i][3] = resultadoDoSelect.getString("idArea");
+                            }
+
+                            DefaultTableModel modelo = new DefaultTableModel(resultadoSQL, colunas);
+                            tabelaResultadoSql = new JTable(modelo);
+                            if (tabelaResultadoSql != null){
+                                System.out.println("A tabela tem coisa");
+                            }
+                            else{
+                                System.out.println("tabela nao está guardando dados");
+                            }
+                            container.add(tabelaResultadoSql);
+                            container.setVisible(true);
+
+                            if (resultadoDoSelect != null){
+                                System.out.println("Deu certo a busca");
+                            }
+                            else{
+                                System.out.println("Deu errado!");
+                            }
+                        }
+                        else{
+                            System.out.println("o resultado está dando nulo");
+                        }
                     }
                     else{
                         System.out.println("Dados inválidos!");
