@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class BancoDeDados {
     public static Connection conexao;
     public static Connection getConnection(String senha , String user , String db , String server) throws SQLException {
-        String URL = "jdbc:sqlserver://" + server + ":1433;databaseName=" + db +";integratedSecurity=false;encrypt=true;trustServerCertificate=true";
+        String URL = "jdbc:sqlserver://" + server + ":1433;databaseName=" + db +";integratedSecurity=false;encrypt=false;trustServerCertificate=true";
         try{
             conexao = DriverManager.getConnection(URL, user, senha);
             return conexao;
