@@ -160,8 +160,17 @@ public class Login {
         }
 
         public static void getConnection() throws SQLException {
-            BancoDeDados obj = new BancoDeDados();
-            conexao = obj.getConnection(senha.getText() , usuario.getText() , banco_de_dados.getText() , servidor.getText());
+            String server = servidor.getText();
+            String db = banco_de_dados.getText();
+            String user = usuario.getText();
+            String passWord = senha.getText();
+            String URL = "jdbc:sqlserver://" + server + ":1433;databaseName=" + db +";integratedSecurity=false;encrypt=false;trustServerCertificate=true";
+            try{
+                conexao = DriverManager.getConnection(URL, user, passWord);
+            }
+            catch (SQLException erro){
+                System.out.println(erro.getMessage());
+            }
         }
 
     public static void depoisLogin() throws SQLException {
@@ -198,9 +207,7 @@ public class Login {
             //panelCampos.add(cbx , BorderLayout.SOUTH);
             janela.pack();
             janela.setVisible(true);
-
-            //System.out.println(janela.getHeight() + "é a altura");
-            //System.out.println(janela.getWidth() + "é a largura");
+            
         }
 
         catch(SQLException erro){
@@ -219,6 +226,7 @@ public class Login {
 
     public static void verificar() throws SQLException{
         if (conexao != null){
+            JOptionPane.showMessageDialog(null , "Login feito com sucesso!");
             depoisLogin();
         }
         else{
@@ -232,6 +240,7 @@ public class Login {
         //janela.removeAll();
         JPanel painelLivros = objetoLivro.realizarTudo();
         container_area.add(painelLivros , BorderLayout.CENTER);
+        janela.pack();
         container_area.add(cbx , BorderLayout.SOUTH);
         janela.add(container_area);
         janela.pack();

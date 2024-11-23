@@ -17,6 +17,8 @@ public class Livros {
     public static JPanel container , painelCampos;
     public static JTextField inpId, inpTitulo , inpAutor , inpArea;
     public static JTable tabelaResultadoSql;
+    public static JLabel mensagem;
+    public static String opcao;
 
    /* public static void main(String[] args){
         montar();
@@ -80,42 +82,49 @@ public class Livros {
         // EM TUDO QUE FOR FAZER
     }
 
-    public static void mostrarInputs(){
-        painelCampos = new JPanel();
-        if (operacao.getSelectedItem().toString() == "BUSCAR"){
+    public static void mostrarInputs() {
+        opcao = new String();
+
+        if (painelCampos == null) {
+            painelCampos = new JPanel();
+        }
+
+
+        painelCampos.removeAll();   //limpa o container se tiver alguma coisa
+        painelCampos.revalidate();  //meio que valida ele após alguma mudanã
+        painelCampos.repaint();     //redesenha o container na tela após alguma alteração
+
+
+        opcao = operacao.getSelectedItem().toString();
+
+
+        if (opcao.equals("BUSCAR")) {
             inpId = new JTextField(10);
             inpTitulo = new JTextField(10);
-            inpAutor = new JTextField(10);
-            inpArea = new JTextField(10);
-            System.out.println("A operação selecionada foi buscar!");
             JLabel id = new JLabel("Digite o id do livro: ");
             JLabel titulo = new JLabel("Digite o título do livro: ");
-            if (painelCampos != null){
-                painelCampos.removeAll();
 
-            }
+            painelCampos.removeAll();
+            painelCampos.setLayout(new GridLayout(2, 2, 5, 5)); // Layout de formulário simples
             painelCampos.add(id);
             painelCampos.add(inpId);
             painelCampos.add(titulo);
             painelCampos.add(inpTitulo);
-            container.add(painelCampos);
+
+            container.add(painelCampos, BorderLayout.CENTER);
         }
-        else if (operacao.getSelectedItem().toString() == "INCLUIR") {
+        else if (opcao.equals("INCLUIR")) {
             inpId = new JTextField(10);
             inpTitulo = new JTextField(10);
             inpAutor = new JTextField(10);
             inpArea = new JTextField(10);
-            System.out.println("A operação selecionada foi incluir!");
             JLabel id = new JLabel("Digite o id do livro: ");
             JLabel titulo = new JLabel("Digite o título do livro: ");
             JLabel idAutor = new JLabel("Digite o id do autor: ");
             JLabel idArea = new JLabel("Digite o id da área que o livro pertence: ");
 
-            painelCampos.setLayout(new GridLayout(4 , 2 , 5 , 5));  //deixa ele parecendo um formulário
-            if (painelCampos != null){
-                painelCampos.removeAll();
-            }
-
+            painelCampos.removeAll();
+            painelCampos.setLayout(new GridLayout(4, 2, 5, 5)); // Layout de formulário completo
             painelCampos.add(id);
             painelCampos.add(inpId);
             painelCampos.add(titulo);
@@ -125,47 +134,49 @@ public class Livros {
             painelCampos.add(idArea);
             painelCampos.add(inpArea);
 
-            container.add(new JPanel());
-            container.add(painelCampos ,BorderLayout.CENTER);
-
+            container.add(painelCampos, BorderLayout.CENTER);
         }
-
-        else if(operacao.getSelectedItem().toString() == "DELETAR"){
-            System.out.println("A operação selecionada foi excluir!");
+        else if (opcao.equals("DELETAR")) {
             JLabel LTitulo = new JLabel("Digite o título do livro: ");
             inpTitulo = new JTextField(10);
-            if (painelCampos != null){
-                painelCampos.removeAll();
-            }
+
+            painelCampos.removeAll();
+            painelCampos.setLayout(new GridLayout(1, 2, 5, 5));
             painelCampos.add(LTitulo);
             painelCampos.add(inpTitulo);
-            container.add(painelCampos);
-            //depois fazer um if para ver se algum JTExtielf está vazio
-            //e fazer o select com bases nos que estão preenchidos
-        }
-        else if (operacao.getSelectedItem().toString() == "ALTERAR") {
-            System.out.println("A operação selecionada foi alterar!");
-            String[] dados = new String[]{"Id livro" , "Título" , "Id autor" , "Id área"};
-            JLabel whereAntigo = new JLabel("Qual é o dado de referência?");
-            JComboBox cbxAntigo = new JComboBox(dados);
-            JLabel LDadoAntigo = new JLabel("Digite o dado de referência: ");
-            JTextField dadoAntigo = new JTextField();
-            JLabel qualAlterar = new JLabel("Qual dado quer alterar?");
-            JComboBox cbxAlterar = new JComboBox(dados);
-            JLabel LNovo = new JLabel("Qual é o novo dado?");
-            JTextField novoDado = new JTextField();
-            container.add(whereAntigo);
-            container.add(cbxAntigo);
-            container.add(LDadoAntigo);
-            container.add(dadoAntigo);
-            container.add(qualAlterar);
-            container.add(cbxAlterar);
-            container.add(LNovo);
-            container.add(novoDado);
-            //tem q pegar todos esses dados e passar para realizar a consulta no sql e dps mostrar
 
+            container.add(painelCampos, BorderLayout.CENTER);
         }
+        else if (opcao.equals("ALTERAR")) {
+            String[] dados = new String[] { "Id livro", "Título", "Id autor", "Id área" };
+            JLabel whereAntigo = new JLabel("Qual é o dado de referência?");
+            JComboBox<String> cbxAntigo = new JComboBox<>(dados);
+            JLabel LDadoAntigo = new JLabel("Digite o dado de referência: ");
+            JTextField dadoAntigo = new JTextField(10);
+            JLabel qualAlterar = new JLabel("Qual dado quer alterar?");
+            JComboBox<String> cbxAlterar = new JComboBox<>(dados);
+            JLabel LNovo = new JLabel("Qual é o novo dado?");
+            JTextField novoDado = new JTextField(10);
+
+            painelCampos.removeAll();
+            painelCampos.setLayout(new GridLayout(6, 2, 5, 5));
+            painelCampos.add(whereAntigo);
+            painelCampos.add(cbxAntigo);
+            painelCampos.add(LDadoAntigo);
+            painelCampos.add(dadoAntigo);
+            painelCampos.add(qualAlterar);
+            painelCampos.add(cbxAlterar);
+            painelCampos.add(LNovo);
+            painelCampos.add(novoDado);
+
+            container.add(painelCampos, BorderLayout.CENTER);
+        }
+
+        // Atualizar o layout após alterações
+        container.revalidate();
+        container.repaint();
     }
+
 
     public static JPanel realizarTudo() throws Exception{
         montar();
@@ -175,22 +186,25 @@ public class Livros {
     }
 
     public static void consultas() throws SQLException {
-        String funcao = operacao.getSelectedItem().toString();
         Statement comandoSql;
-        switch (funcao){
+        switch (opcao){
             case "INCLUIR":
                 //PASSAR COMO PARAMETRO O INSERT INTO COM OS DADOS
-                String sql = "INSERT INTO SisBib.Livro values (? , ? , ? , ?)";
+                String sql = "INSERT INTO SisBib.Livro(codLivro , titulo , idAutor , idArea) values (? , ? , ? , ?)";
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
                     preparedStatement.setString(1 , inpId.getText());  //muda o primeiro '?'
                     preparedStatement.setString(2 , inpTitulo.getText());   //  muda o segundi '?'
                     preparedStatement.setInt(3 , Integer.parseInt(inpAutor.getText()));
+                    preparedStatement.setInt(4 , Integer.parseInt(inpArea.getText()));
+                    System.out.println(sql);
                     int linhasAfetadas = preparedStatement.executeUpdate();
                     System.out.println("Linhas afetadas: " + linhasAfetadas);
+                    JOptionPane.showMessageDialog(null , "Linhas afetadas: " + linhasAfetadas);
                 }
                 catch (SQLException ex) {
-                    throw new RuntimeException(ex);
+                    System.out.println(ex.getMessage());;
+                    JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
                 break;
             case "DELETAR":
@@ -261,12 +275,7 @@ public class Livros {
 
                             DefaultTableModel modelo = new DefaultTableModel(resultadoSQL, colunas);
                             tabelaResultadoSql = new JTable(modelo);
-                            /*if (tabelaResultadoSql != null){
-                                System.out.println("A tabela tem coisa");
-                            }
-                            else{
-                                System.out.println("tabela nao está guardando dados");
-                            }*/
+                            tabelaResultadoSql.setVisible(true);
 
                             container.add(tabelaResultadoSql);
                             container.setVisible(true);
@@ -390,6 +399,7 @@ public class Livros {
                             }
                             container.add(tabelaResultadoSql);
                             container.setVisible(true);
+                            //Login.janela.pack();
 
                             if (resultadoDoSelect != null){
                                 System.out.println("Deu certo a busca");
