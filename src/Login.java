@@ -131,7 +131,7 @@ public class Login {
 
             // Criar um painel interno para os campos de texto e labels
             panelCampos = new JPanel();
-            panelCampos.setLayout(new GridLayout(6 ,2, 5, 5)); // 4 linhas, 2 colunas, espaçamento 5px
+            panelCampos.setLayout(new GridLayout(6 ,2, 5, 5)); // 6 linhas, 2 colunas, espaçamento 5px
             panelCampos.add(LServidor, BorderLayout.CENTER);
             panelCampos.add(servidor, BorderLayout.CENTER);
             panelCampos.add(LBD, BorderLayout.CENTER);
@@ -150,7 +150,7 @@ public class Login {
             container_area = new JPanel();
             container_area.add(panelCampos, BorderLayout.CENTER); // Campos no centro
 
-            janela.setTitle("Login ao BD");
+            //janela.setTitle("Login ao BD");
             janela.setLayout(new BorderLayout());
             janela.add(abas, BorderLayout.NORTH);           // Abas no topo
             janela.add(container_area); // Painel principal no centro
@@ -176,7 +176,7 @@ public class Login {
                 quantasBibliotecas +=1;
             }
 
-            System.out.println(quantasBibliotecas + " é o número de bibliotecas cadastradas");
+            //System.out.println(quantasBibliotecas + " é o número de bibliotecas cadastradas");
 
             opcoes = new String[quantasBibliotecas];    // criar um vetor com tamanho de quantas bibliotecas para exibir no cbx
 
@@ -199,8 +199,8 @@ public class Login {
             janela.pack();
             janela.setVisible(true);
 
-            System.out.println(janela.getHeight() + "é a altura");
-            System.out.println(janela.getWidth() + "é a largura");
+            //System.out.println(janela.getHeight() + "é a altura");
+            //System.out.println(janela.getWidth() + "é a largura");
         }
 
         catch(SQLException erro){
@@ -209,13 +209,13 @@ public class Login {
     }
 
     //talvez colocar isso em uma outra classe seja melhor!
-    public static ResultSet realizarSQL() throws SQLException {
+    /*public static ResultSet realizarSQL() throws SQLException {
         Statement comandoSQL = conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         resultadoSelect = comandoSQL.executeQuery("select nome from SisBib.Biblioteca");    //aqui vai receber como parâmetro a consulta desejada
         //cuidar depois do SQLInjection
         return resultadoSelect;
 
-    }
+    }*/
 
     public static void verificar() throws SQLException{
         if (conexao != null){
@@ -224,7 +224,6 @@ public class Login {
         else{
             System.out.println("Não entra no if para montar com o combo box");
         }
-
     }
 
     public static Component mostrarLivros() throws Exception{    //  só retorna Component porque o JTabbed precasa que esse método retorne um componente
@@ -239,9 +238,9 @@ public class Login {
         return null;
     }
 
-    public static JPanel getPanel(){
+    /*public static JPanel getPanel(){
         montar();
         return container_area;
-    }
+    }*/
 
 }
