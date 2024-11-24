@@ -283,7 +283,7 @@ public class Login {
         String biblioteca = cbx.getSelectedItem().toString();
         try {
             Statement comandoSql = conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            resultadoSelect = comandoSql.executeQuery("select * from SisBib.Biblioteca where nome='" + biblioteca + "'");
+            resultadoSelect = comandoSql.executeQuery("select * from SisBib.Biblioteca where nome = '" + biblioteca + "'");
             idBibliotecaEscolhida = resultadoSelect.getInt("idBiblioteca");
             System.out.println(idBibliotecaEscolhida);
 
