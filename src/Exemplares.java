@@ -123,32 +123,6 @@ public class Exemplares {
                 container.add(painelCampos, BorderLayout.CENTER);
             }
 
-            case "BUSCAR" -> {
-                inputIdExemplar = new JTextField(10);
-                inputCodLivro = new JTextField(10);
-                inputNumExemplar = new JTextField(10);
-
-                JLabel idExemplar = new JLabel("Digite o id do exemplar: ");
-                JLabel codLivro = new JLabel("Digite o código do livro: ");
-                JLabel numExemplar = new JLabel("Digite o número do exemplar: ");
-
-                painelCampos.removeAll();
-                painelCampos.setLayout(new GridLayout(5, 2, 5, 5)); // Layout de formulário simples
-
-                painelCampos.add(idExemplar);
-                painelCampos.add(inputIdExemplar);
-                painelCampos.add(new JLabel("ou"));
-                painelCampos.add(new JLabel(""));
-                painelCampos.add(codLivro);
-                painelCampos.add(inputCodLivro);
-                painelCampos.add(new JLabel("ou"));
-                painelCampos.add(new JLabel(""));
-                painelCampos.add(numExemplar);
-                painelCampos.add(inputNumExemplar);
-
-                container.add(painelCampos, BorderLayout.CENTER);
-            }
-
             case "ALTERAR" -> {
                 String[] dados = new String[]{"Id Exemplar", "Id Biblioteca", "Código Livro", "Número Exemplar"};
 
@@ -178,6 +152,32 @@ public class Exemplares {
 
                 container.add(painelCampos, BorderLayout.CENTER);
             }
+
+            case "BUSCAR" -> {
+                inputIdExemplar = new JTextField(10);
+                inputCodLivro = new JTextField(10);
+                inputNumExemplar = new JTextField(10);
+
+                JLabel idExemplar = new JLabel("Digite o id do exemplar: ");
+                JLabel codLivro = new JLabel("Digite o código do livro: ");
+                JLabel numExemplar = new JLabel("Digite o número do exemplar: ");
+
+                painelCampos.removeAll();
+                painelCampos.setLayout(new GridLayout(5, 2, 5, 5)); // Layout de formulário simples
+
+                painelCampos.add(idExemplar);
+                painelCampos.add(inputIdExemplar);
+                painelCampos.add(new JLabel("ou"));
+                painelCampos.add(new JLabel(""));
+                painelCampos.add(codLivro);
+                painelCampos.add(inputCodLivro);
+                painelCampos.add(new JLabel("ou"));
+                painelCampos.add(new JLabel(""));
+                painelCampos.add(numExemplar);
+                painelCampos.add(inputNumExemplar);
+
+                container.add(painelCampos, BorderLayout.CENTER);
+            }
         }
 
         // Atualizar o layout após alterações
@@ -185,10 +185,12 @@ public class Exemplares {
         container.repaint();
     }
 
+
     public static JPanel realizarTudo() throws Exception {
         montarBotoesPrincipais();
         return container;
     }
+
 
     public static void consultas() throws SQLException {
         Statement comandoSql;
@@ -229,6 +231,7 @@ public class Exemplares {
                     JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
                 break;
+
             case "ALTERAR":
                 sql = "update SisBib.Exemplar set codLivro = ? where numeroExemplar = ?";
                 try {
@@ -242,6 +245,7 @@ public class Exemplares {
                     throw new RuntimeException(ex);
                 }
                 break;
+
             case "BUSCAR":
                 String codLivro = inputCodLivro.getText();
                 String numExemplar = inputNumExemplar.getText();
