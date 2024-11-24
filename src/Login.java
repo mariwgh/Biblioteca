@@ -255,7 +255,7 @@ public class Login {
         JPanel painelLivros = objetoLivro.realizarTudo();
         container_area.add(painelLivros , BorderLayout.CENTER);
         janela.pack();
-        container_area.add(cbx , BorderLayout.SOUTH);
+        //container_area.add(cbx , BorderLayout.SOUTH);
         janela.add(container_area);
         janela.pack();
         return null;
@@ -268,7 +268,6 @@ public class Login {
         JPanel painelExemplar = objetoExemplar.realizarTudo();
         container_area.add(painelExemplar , BorderLayout.CENTER);
         janela.pack();
-        container_area.add(cbx , BorderLayout.SOUTH);
         janela.add(container_area);
         janela.pack();
         return null;
@@ -284,7 +283,13 @@ public class Login {
         try {
             Statement comandoSql = conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             resultadoSelect = comandoSql.executeQuery("select * from SisBib.Biblioteca where nome = '" + biblioteca + "'");
-            idBibliotecaEscolhida = resultadoSelect.getInt("idBiblioteca");
+
+            if (resultadoSelect.next()) {
+                idBibliotecaEscolhida = resultadoSelect.getInt("idBiblioteca");
+            } else {
+                throw new SQLException("Biblioteca não encontrada!");
+            }
+
             System.out.println(idBibliotecaEscolhida);
 
         } catch (Exception ex) {
