@@ -136,10 +136,14 @@ values
 (7, 'JP1000', 1);
 
 --OPERACOES DE EXEMPLAR
-delete SisBib.Exemplar where idExemplar = 12
+delete SisBib.Exemplar where idExemplar = '23'
+delete from SisBib.Exemplar where idExemplar =
 select * from SisBib.Exemplar where idExemplar = 12
 update SisBib.Exemplar set numeroExemplar = 12 where numeroExemplar = 12
+update SisBib.Exemplar set numeroExemplar = 8  where idExemplar = 22
 
+select * from SisBib.Exemplar where idBiblioteca = 2 and idExemplar = 20
+select * from SisBib.Exemplar where idBiblioteca = 2 and codLivro = 'QVCALK'
 
 select * from SisBib.Leitor
 --idLeitor é identity

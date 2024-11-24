@@ -17,6 +17,8 @@ public class Exemplares {
     public static JTextField inputCodLivro, inputNumExemplar, inputIdExemplar;
     public static JTable tabelaResultadoSql;
     public static String opcao;
+    public static JComboBox<String> colunaRef, colunaAlterar;
+    public static JTextField dadoRef, dadoNovo;
 
     // Inicializar o valor de idBibliotecaEscolhida
     public static int idBibliotecaEscolhida;
@@ -124,19 +126,19 @@ public class Exemplares {
             }
 
             case "ALTERAR" -> {
-                String[] dados = new String[]{"Id Exemplar", "Id Biblioteca", "Código Livro", "Número Exemplar"};
+                String[] dados = new String[]{"idExemplar", "idBiblioteca", "codLivro", "numeroExemplar"};
 
                 JLabel whereColuna = new JLabel("Qual é o dado de referência?");
-                JComboBox<String> colunaRef = new JComboBox<>(dados);
+                colunaRef = new JComboBox<>(dados);
 
                 JLabel whereDado = new JLabel("Digite o dado de referência: ");
-                JTextField dadoRef = new JTextField(10);
+                dadoRef = new JTextField(10);
 
                 JLabel setColuna = new JLabel("Qual dado quer alterar?");
-                JComboBox<String> colunaAlterar = new JComboBox<>(dados);
+                colunaAlterar = new JComboBox<>(dados);
 
                 JLabel setDado = new JLabel("Digite o novo dado: ");
-                JTextField dadoNovo = new JTextField(10);
+                dadoNovo = new JTextField(10);
 
                 painelCampos.removeAll();
                 painelCampos.setLayout(new GridLayout(6, 2, 5, 5));
@@ -194,244 +196,135 @@ public class Exemplares {
 
     public static void consultas() throws SQLException {
         Statement comandoSql;
-        switch (opcao){
+        switch (opcao) {
             case "INCLUIR":
                 //PASSAR COMO PARAMETRO O INSERT INTO COM OS DADOS
                 String sql = "INSERT INTO SisBib.Exemplar(idBiblioteca, codLivro, numeroExemplar) values (? , ? , ?)";
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
-                    preparedStatement.setInt(1 , idBibliotecaEscolhida);     //primeiro '?'
-                    preparedStatement.setString(2 , inputCodLivro.getText());                   //segundo '?'
-                    preparedStatement.setInt(3 , Integer.parseInt(inputNumExemplar.getText()));                //terceiro '?'
+                    preparedStatement.setInt(1, idBibliotecaEscolhida);     //primeiro '?'
+                    preparedStatement.setString(2, inputCodLivro.getText());                   //segundo '?'
+                    preparedStatement.setInt(3, Integer.parseInt(inputNumExemplar.getText()));                //terceiro '?'
 
                     System.out.println(sql);
                     int linhasAfetadas = preparedStatement.executeUpdate();
                     System.out.println("Linhas afetadas: " + linhasAfetadas);
-                    JOptionPane.showMessageDialog(null , "Linhas afetadas: " + linhasAfetadas);
-                }
-                catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
+                } catch (SQLException ex) {
                     System.out.println(ex.getMessage());
                     JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
                 break;
 
             case "DELETAR":
-                sql = "delete SisBib.Exemplar where idExemplar = ?";
+                sql = "delete SisBib.Exemplar where idExemplar = ? and idBiblioteca = " + idBibliotecaEscolhida;
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
-                    preparedStatement.setInt(1 , Integer.parseInt(inputIdExemplar.getText()));
+                    preparedStatement.setInt(1, Integer.parseInt(inputIdExemplar.getText()));
 
                     System.out.println(sql);
                     int linhasAfetadas = preparedStatement.executeUpdate();
                     System.out.println("Linhas afetadas: " + linhasAfetadas);
-                    JOptionPane.showMessageDialog(null , "Linhas afetadas: " + linhasAfetadas);
-                }
-                catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
+                } catch (SQLException ex) {
                     System.out.println(ex.getMessage());
                     JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
                 break;
 
             case "ALTERAR":
-                sql = "update SisBib.Exemplar set codLivro = ? where numeroExemplar = ?";
+                sql = "update SisBib.Exemplar set " + colunaAlterar.getSelectedItem() + " = ? where " + colunaRef.getSelectedItem() + " = ? and idBiblioteca = " + idBibliotecaEscolhida;
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
-                    preparedStatement.setInt(1 , Integer.parseInt(inputCodLivro.getText()));
-                    preparedStatement.setInt(2 , Integer.parseInt(inputNumExemplar.getText()));
+
+                    preparedStatement.setInt(1, Integer.parseInt(dadoNovo.getText()));      //dado novo
+                    preparedStatement.setInt(2, Integer.parseInt(dadoRef.getText()));      //dado antigo
+
                     int linhasAfetadas = preparedStatement.executeUpdate();
                     System.out.println("Linhas afetadas: " + linhasAfetadas);
-                }
-                catch (SQLException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                    JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
                 break;
 
             case "BUSCAR":
+                String idExemplar = inputIdExemplar.getText();
                 String codLivro = inputCodLivro.getText();
                 String numExemplar = inputNumExemplar.getText();
 
-                if (codLivro.equals("") && numExemplar.equals("")){
-                    try{
-                        int linhas = 0;
-                        //só funciona com a busca geral, mostra tudo
-                        //tem q fzr o where idBiblioteca
-                        comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);  //esses parâmetros permitem o 'cursor' voltar
-                        ResultSet resultadoDoSelect = comandoSql.executeQuery("select * from SisBib.Exemplar where idBiblioteca = " + idBibliotecaEscolhida);        //tem que fazer um where do idBiblioteca
+                String stringSql = "select * from SisBib.Exemplar where idBiblioteca = " + idBibliotecaEscolhida;
 
-                        if (resultadoDoSelect != null){
-                            while(resultadoDoSelect.next()){      //conta quantas linhas tem o resultado
-                                //System.out.println(resultadoDoSelect.getInt("idArea"));
-                                linhas +=1;
-                            }
+                //se nenhum campo for fornecido, a stringSql continuara a mesma e n entrara nos id
+                //se forneceu todos os campos, entrará em todos os if
 
-                            linhas += 1;    //para colocar as colunas também
-
-                            String[] colunas = new String[]{"idExemplar" , "idBiblioteca" , "codLivro" , "numeroExemplar"};
-                            String[][] resultadoSQL = new String[linhas][4]; //com x linhas e cada linha tem 4 campos (colunas)
-
-                            resultadoDoSelect.beforeFirst();        //volta para o inicio para guardar os dados no resultadoSQL
-
-                            resultadoSQL[0][0] = "idExemplar";  //definir o "nome das colunas"
-                            resultadoSQL[0][1] = "idBiblioteca";
-                            resultadoSQL[0][2] = "CÓdigo Livro";
-                            resultadoSQL[0][3] = "Número Exemplar";
-
-                            for (int i = 1 ; i < linhas ; i++){
-                                resultadoDoSelect.next();
-                                //resultadoSQL[i][0] = resultadoDoSelect.getInt("codLivro");
-                                //System.out.println(Integer.toString(resultadoDoSelect.getInt("codLivro")));
-                                resultadoSQL[i][0] = resultadoDoSelect.getString("idExemplar");
-                                resultadoSQL[i][1] = resultadoDoSelect.getString("idBiblioteca");
-                                resultadoSQL[i][2] = resultadoDoSelect.getString("codLivro");
-                                resultadoSQL[i][3] = resultadoDoSelect.getString("numeroExemplar");
-                            }
-
-                            DefaultTableModel modelo = new DefaultTableModel(resultadoSQL, colunas);
-                            tabelaResultadoSql = new JTable(modelo);
-                            tabelaResultadoSql.setVisible(true);
-
-                            JScrollPane scrollPane = new JScrollPane(tabelaResultadoSql);
-                            container.add(scrollPane, BorderLayout.CENTER);
-
-                            container.setVisible(true);
-
-                            if (resultadoDoSelect != null){
-                                System.out.println("Deu certo a busca");
-                            }
-                            else{
-                                System.out.println("Deu errado!");
-                            }
-                        }
-                        else{
-                            System.out.println("o resultado está dando nulo");
-                        }
-                    }
-                    catch (SQLException erro){
-                        System.out.println(erro.getMessage());
-                    }
+                //se ele forneceu idExemplar
+                if (!idExemplar.equals("")) {
+                    stringSql += " and idExemplar = " + Integer.parseInt(idExemplar);
                 }
-                else {
-                    if (numExemplar.equals("")){ //se o usuario tiver digitado somente o cod
-                        int linhas = 0;
-                        //só funciona com a busca geral, mostra tudo
-                        //tem q fzr o where idBiblioteca
-                        comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                        ResultSet resultadoDoSelect = comandoSql.executeQuery("select * from SisBib.Exemplar where codLivro = '" + inputCodLivro.getText() + "'");        //tem que fazer um where do idBiblioteca
-                        if (resultadoDoSelect != null){
-                            while(resultadoDoSelect.next()){      //conta quantas linhas tem o resultado
-                                System.out.println(resultadoDoSelect.getInt("idExemplar")); //ELE TA PEGANDO AQUI
-                                linhas +=1;
-                            }
 
-                            linhas += 1;    //para colocar as colunas também
+                //se ele forneceu codExemplar
+                if (!codLivro.equals("")) {
+                    stringSql += " and codLivro = '" + codLivro + "'";
+                }
 
-                            String[] colunas = new String[]{"idExemplar" , "idBiblioteca" , "codLivro" , "numeroExemplar"};
-                            String[][] resultadoSQL = new String[linhas][4]; //com x linhas e cada linha tem 4 campos (colunas)
+                //se ele forneceu numExemplar
+                if (!numExemplar.equals("")) {
+                    stringSql += " and numeroExemplar = " + Integer.parseInt(numExemplar);
+                }
 
-                            resultadoDoSelect.beforeFirst();        //volta para o inicio para guardar os dados no resultadoSQL
+                System.out.println(stringSql);
 
-                            resultadoSQL[0][0] = "idExemplar";  //definir o "nome das colunas"
-                            resultadoSQL[0][1] = "idBiblioteca";
-                            resultadoSQL[0][2] = "CÓdigo Livro";
-                            resultadoSQL[0][3] = "Número Exemplar";
+                try {
+                    int linhas = 0;
+                    comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);  //esses parâmetros permitem o 'cursor' voltar
+                    ResultSet resultadoDoSelect = comandoSql.executeQuery(stringSql);        //tem que fazer um where do idBiblioteca
 
-                            for (int i = 1 ; i < linhas ; i++){
-                                resultadoDoSelect.next();
-                                //resultadoSQL[i][0] = resultadoDoSelect.getInt("codLivro");
-                                //System.out.println(Integer.toString(resultadoDoSelect.getInt("codLivro")));
-                                resultadoSQL[i][0] = resultadoDoSelect.getString("codLivro");
-                                resultadoSQL[i][1] = resultadoDoSelect.getString("titulo");
-                                resultadoSQL[i][2] = resultadoDoSelect.getString("idAutor");
-                                resultadoSQL[i][3] = resultadoDoSelect.getString("idArea");
-                            }
-
-                            DefaultTableModel modelo = new DefaultTableModel(resultadoSQL, colunas);
-                            tabelaResultadoSql = new JTable(modelo);
-                            if (tabelaResultadoSql != null){
-                                System.out.println("A tabela tem coisa");
-                            }
-                            else{
-                                System.out.println("tabela nao está guardando dados");
-                            }
-                            JScrollPane scrollPane = new JScrollPane(tabelaResultadoSql);
-                            container.add(scrollPane, BorderLayout.CENTER);
-
-                            container.setVisible(true);
-
-                            if (resultadoDoSelect != null){
-                                System.out.println("Deu certo a busca");
-                            }
-                            else{
-                                System.out.println("Deu errado!");
-                            }
+                    //se houver resultados/exemplares
+                    if (resultadoDoSelect != null) {
+                        while (resultadoDoSelect.next()) {      //conta quantas linhas tem o resultado
+                            linhas += 1;
                         }
-                        else{
-                            System.out.println("o resultado está dando nulo");
+
+                        linhas += 1;    //para colocar as colunas também
+
+                        String[] colunas = new String[]{"idExemplar", "idBiblioteca", "codLivro", "numeroExemplar"};
+                        String[][] resultadoSQL = new String[linhas][4]; //com x linhas e cada linha tem 4 campos (colunas)
+
+                        resultadoDoSelect.beforeFirst();        //volta para o inicio para guardar os dados no resultadoSQL
+
+                        //definir o "nome das colunas"
+                        resultadoSQL[0][0] = colunas[0];
+                        resultadoSQL[0][1] = colunas[1];
+                        resultadoSQL[0][2] = colunas[2];
+                        resultadoSQL[0][3] = colunas[3];
+
+                        for (int i = 1; i < linhas; i++) {
+                            resultadoDoSelect.next();
+
+                            resultadoSQL[i][0] = resultadoDoSelect.getString("idExemplar");
+                            resultadoSQL[i][1] = resultadoDoSelect.getString("idBiblioteca");
+                            resultadoSQL[i][2] = resultadoDoSelect.getString("codLivro");
+                            resultadoSQL[i][3] = resultadoDoSelect.getString("numeroExemplar");
                         }
+
+                        DefaultTableModel modelo = new DefaultTableModel(resultadoSQL, colunas);
+                        tabelaResultadoSql = new JTable(modelo);
+                        //tabelaResultadoSql.setVisible(true);
+
+                        //JScrollPane scrollPane = new JScrollPane(tabelaResultadoSql);
+                        //container.add(scrollPane, BorderLayout.CENTER);
+
+                        container.add(tabelaResultadoSql);
+                        container.setVisible(true);
                     }
-                    else if (numExemplar.equals("")) {   //usuario digitou somente o titulo
-                        int linhas = 0;
-                        //só funciona com a busca geral, mostra tudo
-                        //tem q fzr o where idBiblioteca
-                        comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                        ResultSet resultadoDoSelect = comandoSql.executeQuery("select * from SisBib.Exemplar where numeroExemplar = '" + inputNumExemplar.getText() + "'");        //tem que fazer um where do idBiblioteca
-                        if (resultadoDoSelect != null){
-                            while(resultadoDoSelect.next()){      //conta quantas linhas tem o resultado
-                                System.out.println(resultadoDoSelect.getInt("idExemplar")); //ELE TA PEGANDO AQUI
-                                linhas +=1;
-                            }
-
-                            linhas += 1;    //para colocar as colunas também
-
-                            String[] colunas = new String[]{"idExemplar" , "idBiblioteca" , "codLivro" , "numeroExemplar"};
-                            String[][] resultadoSQL = new String[linhas][4]; //com x linhas e cada linha tem 4 campos (colunas)
-
-                            resultadoDoSelect.beforeFirst();        //volta para o inicio para guardar os dados no resultadoSQL
-
-                            resultadoSQL[0][0] = "idExemplar";  //definir o "nome das colunas"
-                            resultadoSQL[0][1] = "idBiblioteca";
-                            resultadoSQL[0][2] = "CÓdigo Livro";
-                            resultadoSQL[0][3] = "Número Exemplar";
-
-                            for (int i = 1 ; i < linhas ; i++){
-                                resultadoDoSelect.next();
-                                //resultadoSQL[i][0] = resultadoDoSelect.getInt("codLivro");
-                                //System.out.println(Integer.toString(resultadoDoSelect.getInt("codLivro")));
-                                resultadoSQL[i][0] = resultadoDoSelect.getString("idExemplar");
-                                resultadoSQL[i][1] = resultadoDoSelect.getString("idBiblioteca");
-                                resultadoSQL[i][2] = resultadoDoSelect.getString("codLivro");
-                                resultadoSQL[i][3] = resultadoDoSelect.getString("numeroExemplar");
-                            }
-
-                            DefaultTableModel modelo = new DefaultTableModel(resultadoSQL, colunas);
-                            tabelaResultadoSql = new JTable(modelo);
-                            if (tabelaResultadoSql != null){
-                                System.out.println("A tabela tem coisa");
-                            }
-                            else{
-                                System.out.println("tabela nao está guardando dados");
-                            }
-
-                            JScrollPane scrollPane = new JScrollPane(tabelaResultadoSql);
-                            container.add(scrollPane, BorderLayout.CENTER);
-
-                            container.setVisible(true);
-                            //Login.janela.pack();
-
-                            if (resultadoDoSelect != null){
-                                System.out.println("Deu certo a busca");
-                            }
-                            else{
-                                System.out.println("Deu errado!");
-                            }
-                        }
-                        else{
-                            System.out.println("o resultado está dando nulo");
-                        }
+                    else {
+                        System.out.println("o resultado está dando nulo");
                     }
-                    else{
-                        System.out.println("Dados inválidos!");
-                    }
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                    JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
         }
     }
