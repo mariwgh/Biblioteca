@@ -270,6 +270,7 @@ public class Login {
         //janela.removeAll();
         JPanel painelExemplar = objetoExemplar.realizarTudo();
         container_area.add(painelExemplar , BorderLayout.CENTER);
+
         janela.pack();
         janela.add(container_area);
         janela.pack();
