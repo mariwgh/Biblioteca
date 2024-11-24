@@ -154,7 +154,10 @@ public class Login {
             panelCampos.add(verSenha , BorderLayout.SOUTH);
 
 
-            // painel principal para organizar campos e botão
+
+
+
+        // painel principal para organizar campos e botão
 
             container_area = new JPanel();
             container_area.add(panelCampos, BorderLayout.CENTER); // Campos no centro
@@ -166,6 +169,7 @@ public class Login {
 
             janela.pack();
             janela.setVisible(true);
+            //janela.setPreferredSize(new Dimension(699 , 469));
         }
 
         public static void getConnection() throws SQLException {
@@ -243,7 +247,7 @@ public class Login {
         }
     }
 
-    public static Component mostrarLivros() throws Exception{    //  só retorna Component porque o JTabbed precasa que esse método retorne um componente
+    public static Component mostrarLivros() throws Exception{    //  só retorna Component porque o JTabbed precisa que esse método retorne um componente
         Livros objetoLivro = new Livros();
         container_area.removeAll();
         //janela.removeAll();
