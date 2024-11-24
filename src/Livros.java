@@ -195,7 +195,6 @@ public class Livros {
         Statement comandoSql;
         switch (opcao){
             case "INCLUIR":
-                
                 if (tabelaResultadoSql != null) {
                     container.remove(tabelaResultadoSql);
                     container.repaint();
