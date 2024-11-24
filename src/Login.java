@@ -28,10 +28,11 @@ public class Login {
     public static JTabbedPane abas;
     public static JTextField servidor, banco_de_dados , usuario;
     public static JPasswordField senha;
-    public static JButton conectar , verSenha;
+    public static JButton conectar , verSenha , selecionarBiblioteca;
     public static JLabel LServidor , LBD , LUsuario , LSenha;
     public static JComboBox cbx;
     public static Connection conexao;
+    public static int idBibliotecaEscolhida;
 
     public static ResultSet resultadoSelect;
 
@@ -133,6 +134,14 @@ public class Login {
                 }
             });
 
+            selecionarBiblioteca = new JButton("Selecionar biblioteca");
+            selecionarBiblioteca.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setIdBibliotecaEscolhida();
+                }
+            });
+
 
             // Criar um painel interno para os campos de texto e labels
             panelCampos = new JPanel();
@@ -212,7 +221,7 @@ public class Login {
             //panelCampos.add(cbx , BorderLayout.SOUTH);
             janela.pack();
             janela.setVisible(true);
-            
+
         }
 
         catch(SQLException erro){
@@ -270,4 +279,18 @@ public class Login {
         return container_area;
     }*/
 
+    public static void setIdBibliotecaEscolhida() {
+        String biblioteca = cbx.getSelectedItem().toString();
+        try {
+            Statement comandoSql = conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            resultadoSelect = comandoSql.executeQuery("select * from SisBib.Biblioteca where nome='" + biblioteca + "'");
+            idBibliotecaEscolhida = resultadoSelect.getInt("idBiblioteca");
+            System.out.println(idBibliotecaEscolhida);
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+
+    }
 }
