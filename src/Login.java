@@ -67,8 +67,13 @@ public class Login {
                     }
                 } else if (index == 1) {
                     System.out.println("Redirecionando para Exemplares...");
-                    //mostrarExemplares();
-                } else if (index == 2) {
+                    try {
+                        mostrarExemplares();
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+                else if (index == 2) {
                     System.out.println("Redirecionando para Empréstimos...");
                     //mostrarEmprestimos();
                 } else if (index == 3) {
@@ -240,6 +245,19 @@ public class Login {
         //janela.removeAll();
         JPanel painelLivros = objetoLivro.realizarTudo();
         container_area.add(painelLivros , BorderLayout.CENTER);
+        janela.pack();
+        container_area.add(cbx , BorderLayout.SOUTH);
+        janela.add(container_area);
+        janela.pack();
+        return null;
+    }
+
+    public static Component mostrarExemplares() throws Exception{    //  só retorna Component porque o JTabbed precasa que esse método retorne um componente
+        Exemplares objetoExemplar = new Exemplares();
+        container_area.removeAll();
+        //janela.removeAll();
+        JPanel painelExemplar = objetoExemplar.realizarTudo();
+        container_area.add(painelExemplar , BorderLayout.CENTER);
         janela.pack();
         container_area.add(cbx , BorderLayout.SOUTH);
         janela.add(container_area);

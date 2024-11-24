@@ -135,6 +135,11 @@ insert into SisBib.Exemplar
 values 
 (7, 'JP1000', 1);
 
+--OPERACOES DE EXEMPLAR
+delete SisBib.Exemplar where idExemplar = 12
+select * from SisBib.Exemplar where idExemplar = 12
+update SisBib.Exemplar set numeroExemplar = 12 where numeroExemplar = 12
+
 
 select * from SisBib.Leitor
 --idLeitor é identity
