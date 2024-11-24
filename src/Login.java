@@ -9,17 +9,13 @@ import java.awt.event.ActionListener;
 import java.awt.image.BaseMultiResolutionImage;
 import java.sql.*;
 /*
-import java.sql.Statement;		// permite criar um objeto de execução de comandos no servidor
+import java.sql.Statement;		        // permite criar um objeto de execução de comandos no servidor
 import java.sql.PreparedStatement;  	// para usar parÂmetros em comandos SQL e evitar SQL Injection
 import java.sql.CallableStatement;  	// para chamar stored procedures
 import java.sql.Date;
 */
 
-//agora, tem que fazer os outros frames e fazer uma variavel para pegar a PK
-//da bibliotexca escolhida e passar como parametro para os outros frames
-//para que eles mexam somente na biblioteca selecionada
 //mas e o ngc de data??
-//cada frame tem que ter o atributo "idBibliotecaEscolhida"
 
 // tela de login ao bd
 public class Login {
@@ -40,19 +36,19 @@ public class Login {
         montar();
     }
 
-    public static void montar(){
-            JPanel panelCampos;
+    public static void montar() {
+        JPanel panelCampos;
 
-            janela = new JFrame();
-            janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        janela = new JFrame();
+        janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            abas = new JTabbedPane();
-            abas.addTab("Livros", new JPanel());
-            abas.addTab("Exemplares", new JPanel());
-            abas.addTab("Empréstimos", new JPanel());
-            abas.addTab("Devoluções", new JPanel());
-            abas.setEnabled(false);
-            abas.addChangeListener(new ChangeListener() {
+        abas = new JTabbedPane();
+        abas.addTab("Livros", new JPanel());
+        abas.addTab("Exemplares", new JPanel());
+        abas.addTab("Empréstimos", new JPanel());
+        abas.addTab("Devoluções", new JPanel());
+        abas.setEnabled(false);
+        abas.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 int index = abas.getSelectedIndex();  // Obtém o índice da aba selecionada
@@ -76,120 +72,125 @@ public class Login {
                 }
                 else if (index == 2) {
                     System.out.println("Redirecionando para Empréstimos...");
-                    //mostrarEmprestimos();
+                    try {
+                        mostrarEmprestimos();
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
                 } else if (index == 3) {
                     System.out.println("Redirecionando para Devoluções...");
-                    //mostrarDevolucoes();
+                    try {
+                        mostrarDevolucoes();
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
                 }
             }
         });
 
-            LServidor = new JLabel("Servidor:");
-            LServidor.setPreferredSize(new Dimension(50 , 50));
-            LBD = new JLabel("Banco de dados:");
-            LUsuario = new JLabel("Usuário:");
-            LSenha = new JLabel("Senha:");
+        LServidor = new JLabel("Servidor:");
+        LServidor.setPreferredSize(new Dimension(50 , 50));
+        LBD = new JLabel("Banco de dados:");
+        LUsuario = new JLabel("Usuário:");
+        LSenha = new JLabel("Senha:");
 
-            servidor = new JTextField(30);
-            servidor.setText("regulus.cotuca.unicamp.br");
-            banco_de_dados = new JTextField(20);
-            usuario = new JTextField(10);
-            senha = new JPasswordField(10);
+        servidor = new JTextField(30);
+        servidor.setText("regulus.cotuca.unicamp.br");
+        banco_de_dados = new JTextField(20);
+        usuario = new JTextField(10);
+        senha = new JPasswordField(10);
 
-            cbx = new JComboBox();
-            cbx.setPreferredSize(new Dimension(100 , 25));
-            cbx.setEnabled(false);
+        cbx = new JComboBox();
+        cbx.setPreferredSize(new Dimension(100 , 25));
+        cbx.setEnabled(false);
 
-            conectar = new JButton("Conectar");
-            conectar.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        getConnection();
-                        if(conexao != null){
-                            System.out.println("Deu certo!");
-                            verificar();
-                        }
-                    }
-                    catch (Exception ex) {
-                        System.out.println(ex.getMessage());
+        conectar = new JButton("Conectar");
+        conectar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    getConnection();
+                    if(conexao != null){
+                        System.out.println("Deu certo!");
+                        verificar();
                     }
                 }
-            });
-
-            verSenha = new JButton("Mostrar");
-            //verSenha.setPreferredSize(new Dimension(4 , 5));
-            verSenha.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (senha.getEchoChar() == '•'){
-                        senha.setEchoChar((char)0); //nao entendi mas é
-                        verSenha.setText("Mostrar");
-                    }
-                    else{
-                        senha.setEchoChar('•');
-                        verSenha.setText("Ocultar");
-                    }
-
+                catch (Exception ex) {
+                    System.out.println(ex.getMessage());
                 }
-            });
+            }
+        });
 
-            selecionarBiblioteca = new JButton("Selecionar biblioteca");
-            selecionarBiblioteca.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    setIdBibliotecaEscolhida();
+        verSenha = new JButton("Mostrar");
+        //verSenha.setPreferredSize(new Dimension(4 , 5));
+        verSenha.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (senha.getEchoChar() == '•'){
+                    senha.setEchoChar((char)0); //nao entendi mas é
+                    verSenha.setText("Mostrar");
                 }
-            });
+                else{
+                    senha.setEchoChar('•');
+                    verSenha.setText("Ocultar");
+                }
+
+            }
+        });
+
+        selecionarBiblioteca = new JButton("Selecionar biblioteca");
+        selecionarBiblioteca.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setIdBibliotecaEscolhida();
+            }
+        });
 
 
-            // Criar um painel interno para os campos de texto e labels
-            panelCampos = new JPanel();
-            panelCampos.setLayout(new GridLayout(6 ,2, 5, 5)); // 6 linhas, 2 colunas, espaçamento 5px
-            panelCampos.add(LServidor, BorderLayout.CENTER);
-            panelCampos.add(servidor, BorderLayout.CENTER);
-            panelCampos.add(LBD, BorderLayout.CENTER);
-            panelCampos.add(banco_de_dados, BorderLayout.CENTER);
-            panelCampos.add(LUsuario,BorderLayout.CENTER);
-            panelCampos.add(usuario,BorderLayout.CENTER);
-            panelCampos.add(LSenha,BorderLayout.CENTER);
-            panelCampos.add(senha,BorderLayout.CENTER);
-            panelCampos.add(conectar , BorderLayout.SOUTH);
-            panelCampos.add(cbx , BorderLayout.CENTER);
-            panelCampos.add(verSenha , BorderLayout.SOUTH);
-
-
-
+        // Criar um painel interno para os campos de texto e labels
+        panelCampos = new JPanel();
+        panelCampos.setLayout(new GridLayout(6 ,2, 5, 5)); // 6 linhas, 2 colunas, espaçamento 5px
+        panelCampos.add(LServidor, BorderLayout.CENTER);
+        panelCampos.add(servidor, BorderLayout.CENTER);
+        panelCampos.add(LBD, BorderLayout.CENTER);
+        panelCampos.add(banco_de_dados, BorderLayout.CENTER);
+        panelCampos.add(LUsuario,BorderLayout.CENTER);
+        panelCampos.add(usuario,BorderLayout.CENTER);
+        panelCampos.add(LSenha,BorderLayout.CENTER);
+        panelCampos.add(senha,BorderLayout.CENTER);
+        panelCampos.add(conectar , BorderLayout.SOUTH);
+        panelCampos.add(cbx , BorderLayout.CENTER);
+        panelCampos.add(verSenha , BorderLayout.SOUTH);
 
 
         // painel principal para organizar campos e botão
 
-            container_area = new JPanel();
-            container_area.add(panelCampos, BorderLayout.CENTER); // Campos no centro
+        container_area = new JPanel();
+        container_area.add(panelCampos, BorderLayout.CENTER); // Campos no centro
 
-            //janela.setTitle("Login ao BD");
-            janela.setLayout(new BorderLayout());
-            janela.add(abas, BorderLayout.NORTH);           // Abas no topo
-            janela.add(container_area); // Painel principal no centro
+        //janela.setTitle("Login ao BD");
+        janela.setLayout(new BorderLayout());
+        janela.add(abas, BorderLayout.NORTH);           // Abas no topo
+        janela.add(container_area); // Painel principal no centro
 
-            janela.pack();
-            janela.setVisible(true);
-            //janela.setPreferredSize(new Dimension(699 , 469));
+        janela.pack();
+        janela.setVisible(true);
+        //janela.setPreferredSize(new Dimension(699 , 469));
+    }
+
+    public static void getConnection() throws SQLException {
+        String server = servidor.getText();
+        String db = banco_de_dados.getText();
+        String user = usuario.getText();
+        String passWord = senha.getText();
+        String URL = "jdbc:sqlserver://" + server + ":1433;databaseName=" + db +";integratedSecurity=false;encrypt=false;trustServerCertificate=true";
+        try{
+            conexao = DriverManager.getConnection(URL, user, passWord);
         }
-
-        public static void getConnection() throws SQLException {
-            String server = servidor.getText();
-            String db = banco_de_dados.getText();
-            String user = usuario.getText();
-            String passWord = senha.getText();
-            String URL = "jdbc:sqlserver://" + server + ":1433;databaseName=" + db +";integratedSecurity=false;encrypt=false;trustServerCertificate=true";
-            try{
-                conexao = DriverManager.getConnection(URL, user, passWord);
-            }
-            catch (SQLException erro){
-                System.out.println(erro.getMessage());
-            }
+        catch (SQLException erro){
+            System.out.println(erro.getMessage());
         }
+    }
 
     public static void depoisLogin() throws SQLException {
         String[] opcoes;
@@ -225,7 +226,6 @@ public class Login {
             //panelCampos.add(cbx , BorderLayout.SOUTH);
             janela.pack();
             janela.setVisible(true);
-
         }
 
         catch(SQLException erro){
@@ -239,7 +239,6 @@ public class Login {
         resultadoSelect = comandoSQL.executeQuery("select nome from SisBib.Biblioteca");    //aqui vai receber como parâmetro a consulta desejada
         //cuidar depois do SQLInjection
         return resultadoSelect;
-
     }*/
 
     public static void verificar() throws SQLException{
@@ -277,10 +276,30 @@ public class Login {
         return null;
     }
 
-    /*public static JPanel getPanel(){
-        montar();
-        return container_area;
-    }*/
+    public static Component mostrarEmprestimos() throws Exception{    //  só retorna Component porque o JTabbed precasa que esse método retorne um componente
+        Exemplares objetoExemplar = new Exemplares();
+        container_area.removeAll();
+        //janela.removeAll();
+        JPanel painelExemplar = objetoExemplar.realizarTudo();
+        container_area.add(painelExemplar , BorderLayout.CENTER);
+        janela.pack();
+        janela.add(container_area);
+        janela.pack();
+        return null;
+    }
+
+    public static Component mostrarDevolucoes() throws Exception{    //  só retorna Component porque o JTabbed precasa que esse método retorne um componente
+        Exemplares objetoExemplar = new Exemplares();
+        container_area.removeAll();
+        //janela.removeAll();
+        JPanel painelExemplar = objetoExemplar.realizarTudo();
+        container_area.add(painelExemplar , BorderLayout.CENTER);
+        janela.pack();
+        janela.add(container_area);
+        janela.pack();
+        return null;
+    }
+
 
     public static void setIdBibliotecaEscolhida() {
         String biblioteca = cbx.getSelectedItem().toString();
@@ -293,13 +312,9 @@ public class Login {
             } else {
                 throw new SQLException("Biblioteca não encontrada!");
             }
-
-            System.out.println(idBibliotecaEscolhida);
-
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
-
     }
 }

@@ -12,32 +12,41 @@ numeroExemplar int*/
 
 public class Exemplares {
     public static JComboBox operacao;
-    public static JButton realizar , voltar , selecionar;
-    //public static int idBibliotecaEscolhida;
-    public static JPanel container , painelCampos;
-    public static JTextField inputCodLivro, inputNumExemplar;
-    public static JTextField inputIdExemplar;
+    public static JButton realizar, voltar, selecionar;
+    public static JPanel container, painelCampos;
+    public static JTextField inputCodLivro, inputNumExemplar, inputIdExemplar;
     public static JTable tabelaResultadoSql;
     public static String opcao;
 
     // Inicializar o valor de idBibliotecaEscolhida
     public static int idBibliotecaEscolhida;
-
     static {
-        // Chamando o método no bloco estático
+        // Chamando o método no bloco estático da classe login
         Login.setIdBibliotecaEscolhida();
-        idBibliotecaEscolhida = Login.idBibliotecaEscolhida;
-        System.out.println(idBibliotecaEscolhida);
+        idBibliotecaEscolhida = Login.idBibliotecaEscolhida; //pega o valor definido dps de definir em login
     }
 
 
-    public static void montar(){
-        JPanel panelCampos;
+    public static void montarBotoesPrincipais(){
+        JPanel painelBotoes;
 
         String[] opcoes = new String[]{"INCLUIR" , "DELETAR" , "ALTERAR" , "BUSCAR"};
 
         operacao = new JComboBox(opcoes);
         operacao.setPreferredSize(new Dimension(100 , 25));
+
+        selecionar = new JButton("SELECIONAR");
+        selecionar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    mostrarEscolhaSelecionada();
+                }
+                catch (Exception erro){
+                    System.out.println(erro.getMessage());
+                }
+            }
+        });
 
         //realiza a opcao escolhida
         realizar = new JButton("REALIZAR");
@@ -54,42 +63,22 @@ public class Exemplares {
             }
         });
 
-        selecionar = new JButton("SELECIONAR");
-        selecionar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try{
-                    mostrarInputs();
-                }
-                catch (Exception erro){
-                    System.out.println(erro.getMessage());
-                }
-            }
-        });
-
         // Criar um painel interno para os campos de texto e labels
-        panelCampos = new JPanel();
-        panelCampos.add(operacao , BorderLayout.NORTH);
-        //panelCampos.add(voltar , BorderLayout.NORTH);
-        panelCampos.add(selecionar , BorderLayout.NORTH);
-        panelCampos.add(realizar , BorderLayout.NORTH);
+        painelBotoes = new JPanel();
+        //painelBotoes.add(voltar , BorderLayout.NORTH);
+        painelBotoes.add(operacao , BorderLayout.NORTH);
+        painelBotoes.add(selecionar , BorderLayout.NORTH);
+        painelBotoes.add(realizar , BorderLayout.NORTH);
 
         // painel principal para organizar campos e botão
         container = new JPanel();
-        container.setLayout(new GridLayout(5 , 4 , 5 , 5));
-        container.add(panelCampos, BorderLayout.NORTH); // Campos no centro
-        container.add(Box.createVerticalStrut(15));
+        container.setLayout(new GridLayout(7 , 4 , 5 , 5));
+        container.add(painelBotoes, BorderLayout.NORTH);        // botoes em cima
+        container.add(Box.createVerticalStrut(15));     //espaçamento vertical fixo de 15 pixels no layout
     }
 
-//    public static void setIdBibliotecaEscolhida(Login id){
-//        idBibliotecaEscolhida = Integer.parseInt(id.toString());
-//        // AQUI VAI TER QUE FAZER UM WHERE COM O ID DA BIBLIOTECA SELECIONADA
-//        // EM TUDO QUE FOR FAZER
-//        Login.setIdBibliotecaEscolhida();
-//        int idBibliotecaEscolhida = Login.idBibliotecaEscolhida;
-//    }
 
-    public static void mostrarInputs() {
+    public static void mostrarEscolhaSelecionada() {
         opcao = new String();
 
         if (painelCampos == null) {
@@ -103,24 +92,6 @@ public class Exemplares {
         opcao = operacao.getSelectedItem().toString();
 
         switch (opcao) {
-            case "BUSCAR" -> {
-                inputCodLivro = new JTextField(10);
-                inputNumExemplar = new JTextField(10);
-                JLabel codLivro = new JLabel("Digite o código do livro: ");
-                JLabel ou = new JLabel("ou: ");
-                JLabel numExemplar = new JLabel("Digite o número do exemplar: ");
-
-                painelCampos.removeAll();
-                painelCampos.setLayout(new GridLayout(2, 2, 5, 5)); // Layout de formulário simples
-
-                painelCampos.add(codLivro);
-                painelCampos.add(inputCodLivro);
-                painelCampos.add(ou);
-                painelCampos.add(numExemplar);
-                painelCampos.add(inputNumExemplar);
-
-                container.add(painelCampos, BorderLayout.CENTER);
-            }
             case "INCLUIR" -> {
                 inputCodLivro = new JTextField(10);
                 inputNumExemplar = new JTextField(10);
@@ -129,7 +100,7 @@ public class Exemplares {
                 JLabel numExemplar = new JLabel("Digite o número do exemplar: ");
 
                 painelCampos.removeAll();
-                painelCampos.setLayout(new GridLayout(4, 2, 5, 5)); // Layout de formulário completo
+                painelCampos.setLayout(new GridLayout(2, 2, 5, 5)); // Layout de formulário completo
 
                 painelCampos.add(codLivro);
                 painelCampos.add(inputCodLivro);
@@ -138,38 +109,72 @@ public class Exemplares {
 
                 container.add(painelCampos, BorderLayout.CENTER);
             }
+
             case "DELETAR" -> {
                 JLabel idExemplar = new JLabel("Digite o ID do exemplar: ");
                 inputIdExemplar = new JTextField(10);
 
                 painelCampos.removeAll();
                 painelCampos.setLayout(new GridLayout(1, 2, 5, 5));
+
                 painelCampos.add(idExemplar);
+                painelCampos.add(inputIdExemplar);
+
+                container.add(painelCampos, BorderLayout.CENTER);
+            }
+
+            case "BUSCAR" -> {
+                inputIdExemplar = new JTextField(10);
+                inputCodLivro = new JTextField(10);
+                inputNumExemplar = new JTextField(10);
+
+                JLabel idExemplar = new JLabel("Digite o id do exemplar: ");
+                JLabel codLivro = new JLabel("Digite o código do livro: ");
+                JLabel numExemplar = new JLabel("Digite o número do exemplar: ");
+
+                painelCampos.removeAll();
+                painelCampos.setLayout(new GridLayout(5, 2, 5, 5)); // Layout de formulário simples
+
+                painelCampos.add(idExemplar);
+                painelCampos.add(inputIdExemplar);
+                painelCampos.add(new JLabel("ou"));
+                painelCampos.add(new JLabel(""));
+                painelCampos.add(codLivro);
+                painelCampos.add(inputCodLivro);
+                painelCampos.add(new JLabel("ou"));
+                painelCampos.add(new JLabel(""));
+                painelCampos.add(numExemplar);
                 painelCampos.add(inputNumExemplar);
 
                 container.add(painelCampos, BorderLayout.CENTER);
             }
+
             case "ALTERAR" -> {
                 String[] dados = new String[]{"Id Exemplar", "Id Biblioteca", "Código Livro", "Número Exemplar"};
-                JLabel whereAntigo = new JLabel("Qual é o dado de referência?");
-                JComboBox<String> cbxAntigo = new JComboBox<>(dados);
-                JLabel LDadoAntigo = new JLabel("Digite o dado de referência: ");
-                JTextField dadoAntigo = new JTextField(10);
-                JLabel qualAlterar = new JLabel("Qual dado quer alterar?");
-                JComboBox<String> cbxAlterar = new JComboBox<>(dados);
-                JLabel LNovo = new JLabel("Qual é o novo dado?");
-                JTextField novoDado = new JTextField(10);
+
+                JLabel whereColuna = new JLabel("Qual é o dado de referência?");
+                JComboBox<String> colunaRef = new JComboBox<>(dados);
+
+                JLabel whereDado = new JLabel("Digite o dado de referência: ");
+                JTextField dadoRef = new JTextField(10);
+
+                JLabel setColuna = new JLabel("Qual dado quer alterar?");
+                JComboBox<String> colunaAlterar = new JComboBox<>(dados);
+
+                JLabel setDado = new JLabel("Digite o novo dado: ");
+                JTextField dadoNovo = new JTextField(10);
 
                 painelCampos.removeAll();
                 painelCampos.setLayout(new GridLayout(6, 2, 5, 5));
-                painelCampos.add(whereAntigo);
-                painelCampos.add(cbxAntigo);
-                painelCampos.add(LDadoAntigo);
-                painelCampos.add(dadoAntigo);
-                painelCampos.add(qualAlterar);
-                painelCampos.add(cbxAlterar);
-                painelCampos.add(LNovo);
-                painelCampos.add(novoDado);
+
+                painelCampos.add(whereColuna);
+                painelCampos.add(colunaRef);
+                painelCampos.add(whereDado);
+                painelCampos.add(dadoRef);
+                painelCampos.add(setColuna);
+                painelCampos.add(colunaAlterar);
+                painelCampos.add(setDado);
+                painelCampos.add(dadoNovo);
 
                 container.add(painelCampos, BorderLayout.CENTER);
             }
@@ -180,8 +185,8 @@ public class Exemplares {
         container.repaint();
     }
 
-    public static JPanel realizarTudo() throws Exception{
-        montar();
+    public static JPanel realizarTudo() throws Exception {
+        montarBotoesPrincipais();
         return container;
     }
 
@@ -193,9 +198,9 @@ public class Exemplares {
                 String sql = "INSERT INTO SisBib.Exemplar(idBiblioteca, codLivro, numeroExemplar) values (? , ? , ?)";
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
-                    preparedStatement.setString(1 , String.valueOf(idBibliotecaEscolhida));     //primeiro '?'
+                    preparedStatement.setInt(1 , idBibliotecaEscolhida);     //primeiro '?'
                     preparedStatement.setString(2 , inputCodLivro.getText());                   //segundo '?'
-                    preparedStatement.setString(3 , inputNumExemplar.getText());                //terceiro '?'
+                    preparedStatement.setInt(3 , Integer.parseInt(inputNumExemplar.getText()));                //terceiro '?'
 
                     System.out.println(sql);
                     int linhasAfetadas = preparedStatement.executeUpdate();
@@ -209,18 +214,19 @@ public class Exemplares {
                 break;
 
             case "DELETAR":
-                sql = "delete from SisBib.Exemplar where idExemplar = ?";
+                sql = "delete SisBib.Exemplar where idExemplar = ?";
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
-                    preparedStatement.setString(1 , inputIdExemplar.getText());
+                    preparedStatement.setInt(1 , Integer.parseInt(inputIdExemplar.getText()));
 
+                    System.out.println(sql);
                     int linhasAfetadas = preparedStatement.executeUpdate();
                     System.out.println("Linhas afetadas: " + linhasAfetadas);
                     JOptionPane.showMessageDialog(null , "Linhas afetadas: " + linhasAfetadas);
                 }
                 catch (SQLException ex) {
-
-                    throw new RuntimeException(ex);
+                    System.out.println(ex.getMessage());
+                    JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
                 break;
             case "ALTERAR":

@@ -71,13 +71,8 @@ public class Livros {
         container.add(panelCampos, BorderLayout.NORTH); // Campos no centro
         //container.setPreferredSize(new Dimension(699 , 459));
         //container.add(Box.createVerticalStrut(15));
-}
-
-    public static void setIdBibliotecaEscolhida(Login id){
-        idBibliotecaEscolhida = Integer.parseInt(id.toString());
-        // AQUI VAI TER QUE FAZER UM WHERE COM O ID DA BIBLIOTECA SELECIONADA
-        // EM TUDO QUE FOR FAZER
     }
+
 
     public static void mostrarInputs() {
         opcao = new String();
@@ -582,7 +577,6 @@ public class Livros {
                         System.out.println("Dados inválidos!");
                     }
                 }
-
         }
     }
 
