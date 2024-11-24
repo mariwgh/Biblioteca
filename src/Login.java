@@ -278,11 +278,11 @@ public class Login {
     }
 
     public static Component mostrarEmprestimos() throws Exception{    //  só retorna Component porque o JTabbed precasa que esse método retorne um componente
-        Exemplares objetoExemplar = new Exemplares();
+        Emprestimos objetoEmprestimo = new Emprestimos();
         container_area.removeAll();
         //janela.removeAll();
-        JPanel painelExemplar = objetoExemplar.realizarTudo();
-        container_area.add(painelExemplar , BorderLayout.CENTER);
+        JPanel painelEmprestimo = objetoEmprestimo.realizarTudo();
+        container_area.add(painelEmprestimo , BorderLayout.CENTER);
         janela.pack();
         janela.add(container_area);
         janela.pack();
@@ -290,11 +290,11 @@ public class Login {
     }
 
     public static Component mostrarDevolucoes() throws Exception{    //  só retorna Component porque o JTabbed precasa que esse método retorne um componente
-        Exemplares objetoExemplar = new Exemplares();
+        Devolucoes objetoDevolucoes = new Devolucoes();
         container_area.removeAll();
         //janela.removeAll();
-        JPanel painelExemplar = objetoExemplar.realizarTudo();
-        container_area.add(painelExemplar , BorderLayout.CENTER);
+        JPanel painelDevolucoes = objetoDevolucoes.realizarTudo();
+        container_area.add(painelDevolucoes , BorderLayout.CENTER);
         janela.pack();
         janela.add(container_area);
         janela.pack();
