@@ -41,7 +41,7 @@ public class Livros {
                 try {
                     consultas();
                 } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(null , ex.getMessage());
                 }
             }
         });
@@ -93,6 +93,7 @@ public class Livros {
         painelCampos.removeAll();   //limpa o container se tiver alguma coisa
         painelCampos.revalidate();  //meio que valida ele após alguma mudanã
         painelCampos.repaint();     //redesenha o container na tela após alguma alteração
+        //container.remove(tabelaResultadoSql);
 
 
         opcao = operacao.getSelectedItem().toString();
@@ -137,13 +138,17 @@ public class Livros {
             container.add(painelCampos, BorderLayout.CENTER);
         }
         else if (opcao.equals("DELETAR")) {
+            JLabel LID = new JLabel("Digite o código do livro: ");
             JLabel LTitulo = new JLabel("Digite o título do livro: ");
             inpTitulo = new JTextField(10);
+            inpId = new JTextField(10);
 
             painelCampos.removeAll();
-            painelCampos.setLayout(new GridLayout(1, 2, 5, 5));
+            painelCampos.setLayout(new GridLayout(2, 2, 5, 5));
             painelCampos.add(LTitulo);
             painelCampos.add(inpTitulo);
+            painelCampos.add(LID);
+            painelCampos.add(inpId);
 
             container.add(painelCampos, BorderLayout.CENTER);
         }
@@ -189,6 +194,12 @@ public class Livros {
         Statement comandoSql;
         switch (opcao){
             case "INCLUIR":
+                if (tabelaResultadoSql != null) {
+                    container.remove(tabelaResultadoSql);
+                    container.repaint();
+                    container.revalidate();
+                }
+
                 //PASSAR COMO PARAMETRO O INSERT INTO COM OS DADOS
                 String sql = "INSERT INTO SisBib.Livro(codLivro , titulo , idAutor , idArea) values (? , ? , ? , ?)";
                 try {
@@ -208,6 +219,13 @@ public class Livros {
                 }
                 break;
             case "DELETAR":
+
+                if (tabelaResultadoSql != null) {   //ESSA BOMMA NÃO FUNCIONA MANO AAAAAAAAAA
+                    container.remove(tabelaResultadoSql);
+                    container.repaint();
+                    container.revalidate();
+                }
+
                 sql = "delete *  from SisBib.Livro where titulo= ?";
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
@@ -220,6 +238,11 @@ public class Livros {
                 }
                 break;
             case "ALTERAR":
+                if (tabelaResultadoSql != null) {
+                    container.remove(tabelaResultadoSql);
+                    container.repaint();
+                    container.revalidate();
+                }
                 sql = "update SisBib.Livro set idArea = ? where titulo = ?";
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
@@ -235,11 +258,15 @@ public class Livros {
             case "BUSCAR":
                 String id = inpId.getText();
                 String titulo = inpTitulo.getText();
-                //System.out.println(inpTitulo.getText());
-                //System.out.println(inpTitulo.getText());
+
+                if (tabelaResultadoSql != null) {
+                    container.remove(tabelaResultadoSql);
+                    container.repaint();
+                    container.revalidate();
+                }
+
                 if (titulo.equals("") && id.equals("")){
                     try{
-
                         int linhas = 0;
                         //só funciona com a busca geral, mostra tudo
                         //tem q fzr o where idBiblioteca
