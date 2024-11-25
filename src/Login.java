@@ -49,7 +49,7 @@ public class Login {
         janela.setLayout(new BorderLayout());
 
         abas = new JTabbedPane();
-        abas.addTab("Início" , new JPanel());
+        abas.addTab("Sair" , new JPanel());
         abas.addTab("Livros", new JPanel());
         abas.addTab("Exemplares", new JPanel());
         abas.addTab("Empréstimos", new JPanel());
@@ -98,7 +98,7 @@ public class Login {
 
         mostrarTelaLogin();
 
-        voltar = new JButton("Voltar");
+        voltar = new JButton("Sair");
         voltar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -186,6 +186,7 @@ public class Login {
         painelCamposLogin.add(conectar , BorderLayout.SOUTH);
         painelCamposLogin.add(verSenha , BorderLayout.SOUTH);
         painelCamposLogin.add(cbx , BorderLayout.CENTER);
+        painelCamposLogin.add(selecionarBiblioteca , BorderLayout.CENTER);
 
         // Painel principal para organizar o login e o calendário
         JPanel painelLogin = new JPanel(new BorderLayout());
@@ -288,8 +289,6 @@ public class Login {
     public static void verificar() throws SQLException{
         if (conexao != null){
             JOptionPane.showMessageDialog(null , "Login feito com sucesso!");
-            System.out.println(janela.getHeight() + " é a altura");
-            System.out.println(janela.getWidth() + " é a largura");
             depoisLogin();
 
         }
@@ -349,7 +348,7 @@ public class Login {
     }
 
 
-    public static void setIdBibliotecaEscolhida() {
+    public static int setIdBibliotecaEscolhida() {
         String biblioteca = cbx.getSelectedItem().toString();
         try {
             Statement comandoSql = conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -357,6 +356,8 @@ public class Login {
 
             if (resultadoSelect.next()) {
                 idBibliotecaEscolhida = resultadoSelect.getInt("idBiblioteca");
+                System.out.println(idBibliotecaEscolhida);
+                return idBibliotecaEscolhida;
             } else {
                 throw new SQLException("Biblioteca não encontrada!");
             }
@@ -364,6 +365,7 @@ public class Login {
             System.out.println(ex.getMessage());
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
+        return -1;
     }
 
     public static String formatarData(java.util.Date data) {
