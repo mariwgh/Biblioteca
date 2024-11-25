@@ -173,6 +173,7 @@ public class Login {
                 setIdBibliotecaEscolhida();
             }
         });
+        selecionarBiblioteca.setEnabled(false);
 
         // Criar um painel interno para os campos de texto e labels
         painelCamposLogin.add(LServidor, BorderLayout.CENTER);
@@ -268,6 +269,7 @@ public class Login {
 
             cbx.setEnabled(true);
             abas.setEnabled(true);
+            selecionarBiblioteca.setEnabled(true);
             //panelCampos.add(cbx , BorderLayout.SOUTH);
             janela.pack();
             janela.setVisible(true);
