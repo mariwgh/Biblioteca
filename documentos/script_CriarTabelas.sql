@@ -118,30 +118,28 @@ values
 
 select * from SisBib.Emprestimo
 --ser preenchida no programa
---idEmprestimo é identity (alguns apagados)
+--idEmprestimo é identity
+
 insert into SisBib.Emprestimo
 (idLeitor, idExemplar, dataEmprestimo, devolucaoEfetiva, devolucaoPrevista)
 values
 (2, 13, '11-11-2024', null, '21-11-2024')
 
 delete SisBib.Emprestimo where idEmprestimo = 10
-
+--para achar numero exemplar de um id
 select * from SisBib.Exemplar where idExemplar = 13 and idBiblioteca = 2
-
+--comando de devolucao
 update SisBib.Emprestimo set devolucaoEfetiva = '30-11-2024' where idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
-
-
---IDLEITOR IDLIVRO NUMEXEMPLAR BIBLIOTECA
-update SisBib.Emprestimo set devolucaoEfetiva = '25-11-2024' where idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
+update SisBib.Emprestimo set devolucaoEfetiva = NULL where idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
+--leitor que atrasou, comando devolucao para chamar sp
 select idLeitor from SisBib.Emprestimo where devolucaoPrevista < devolucaoEfetiva and idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
 
-update SisBib.Emprestimo set devolucaoEfetiva = NULL where idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
 
-SELECT * FROM SisBib.Exemplar
 
 select * from SisBib.Exemplar
 --ser preenchida no programa
 --idExemplar é identity (alguns apagados)
+
 insert into SisBib.Exemplar 
 (idBiblioteca, codLivro, numeroExemplar)
 values 
@@ -149,16 +147,13 @@ values
 
 --OPERACOES DE EXEMPLAR
 delete SisBib.Exemplar where idExemplar = '23'
-delete from SisBib.Exemplar where idExemplar =
-select * from SisBib.Exemplar where idExemplar = 12
-update SisBib.Exemplar set numeroExemplar = 12 where numeroExemplar = 12
-update SisBib.Exemplar set numeroExemplar = 8  where idExemplar = 22
+update SisBib.Exemplar set numeroExemplar = 12 where numeroExemplar = 12 and idExemplar = 1 and idBiblioteca = 2
+select * from SisBib.Exemplar where idBiblioteca = 2 and idExemplar = 20 and codLivro = 'QVCALK'
 
-select * from SisBib.Exemplar where idBiblioteca = 2 and idExemplar = 20
-select * from SisBib.Exemplar where idBiblioteca = 2 and codLivro = 'QVCALK'
 
 select * from SisBib.Leitor
 --idLeitor é identity
+
 insert into SisBib.Leitor
 (nome, estaSuspenso)
 values
@@ -170,11 +165,12 @@ update SisBib.Leitor set estaSuspenso = 'N' where idLeitor = 2
 
 select * from SisBib.Livro
 --ser preenchida no programa
+
 insert into SisBib.Livro
 (codLivro, titulo, idAutor, idArea)
 values
-('JP100', 'Jurassic Park', 5, 2)
-update SisBib.Livro set codLivro = 'JP1000' where codLivro = 'JP100'
+('JP1000', 'Jurassic Park', 5, 2)
+
 
 
 --6.	Criar view para listar os livros em atraso e o valor de multa a ser cobrada de cada leitor. Cada dia de atraso corresponde a R$5,00.
@@ -250,7 +246,8 @@ begin
 		end
 end
 
-DROP TRIGGER SisBib.exemplarDisponivel
+drop trigger SisBib.exemplarDisponivel
+
 
 insert into SisBib.Emprestimo
 (idLeitor, idExemplar, dataEmprestimo, devolucaoEfetiva, devolucaoPrevista)
@@ -275,4 +272,10 @@ end
 
 exec SisBib.suspenderLeitor 1
 
-select idLeitor from SisBib.Emprestimo where devolucaoPrevista < devolucaoEfetiva and idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = JURPK1 and numeroExemplar = 6 and idBiblioteca = 2)
+select idLeitor from SisBib.Emprestimo where devolucaoPrevista < devolucaoEfetiva and idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
+
+select * from SisBib.Exemplar WHERE idBiblioteca = 2
+
+-- trigger add para: 
+--um leitor pode ter consigo, simultaneamente, até 5 livros emprestados, no máximo
+--o atraso na devolução de um livro torna o leitor suspenso.
