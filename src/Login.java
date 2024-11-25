@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BaseMultiResolutionImage;
 import java.sql.*;
+import java.util.Properties;
+
 /*
 import java.sql.Statement;		        // permite criar um objeto de execução de comandos no servidor
 import java.sql.PreparedStatement;  	// para usar parÂmetros em comandos SQL e evitar SQL Injection
@@ -15,7 +17,8 @@ import java.sql.CallableStatement;  	// para chamar stored procedures
 import java.sql.Date;
 */
 
-//mas e o ngc de data??
+import org.jdatepicker.impl.*;
+
 
 // tela de login ao bd
 public class Login {
@@ -41,6 +44,7 @@ public class Login {
 
         janela = new JFrame();
         janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        janela.setTitle("Sistema de Biblioteca");
 
         abas = new JTabbedPane();
         abas.addTab("Livros", new JPanel());
@@ -121,18 +125,18 @@ public class Login {
             }
         });
 
-        verSenha = new JButton("Mostrar");
+        verSenha = new JButton("Mostrar Senha");
         //verSenha.setPreferredSize(new Dimension(4 , 5));
         verSenha.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (senha.getEchoChar() == '•'){
                     senha.setEchoChar((char)0); //nao entendi mas é
-                    verSenha.setText("Mostrar");
+                    verSenha.setText("Mostrar Senha");
                 }
                 else{
                     senha.setEchoChar('•');
-                    verSenha.setText("Ocultar");
+                    verSenha.setText("Ocultar Senha");
                 }
 
             }
@@ -159,8 +163,8 @@ public class Login {
         panelCampos.add(LSenha,BorderLayout.CENTER);
         panelCampos.add(senha,BorderLayout.CENTER);
         panelCampos.add(conectar , BorderLayout.SOUTH);
-        panelCampos.add(cbx , BorderLayout.CENTER);
         panelCampos.add(verSenha , BorderLayout.SOUTH);
+        panelCampos.add(cbx , BorderLayout.CENTER);
 
 
         // painel principal para organizar campos e botão
@@ -171,7 +175,25 @@ public class Login {
         //janela.setTitle("Login ao BD");
         janela.setLayout(new BorderLayout());
         janela.add(abas, BorderLayout.NORTH);           // Abas no topo
-        janela.add(container_area); // Painel principal no centro
+
+
+        //calendario ao lado direto? do login
+        Container cntForm = janela.getContentPane();                              // acessa a área de 'desenho'
+        cntForm.setLayout(new BorderLayout());
+        //espaco
+        UtilDateModel model = new UtilDateModel();                               //cria um modelo de dados para o componente de seleção de data
+        Properties p = new Properties();                                        //cria um objeto de propriedades que será usado para personalizar o painel de seleção de datas
+        p.put("text.today", "Today"); p.put("text.month", "Month");
+        p.put("text.year", "Year");                                             //define os textos personalizados para o painel de seleção de datas
+        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);                //cria o painel de calendário com base no UtilDateModel (modelo de dados) e nas propriedades configuradas
+        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());  //cria o componente DatePicker propriamente dito (escolhe data)
+        datePicker.setBounds(110, 100, 200, 25);            //define a posição
+        model.setSelected(true);                                                //ativa o modelo, indicando que uma data foi selecionada
+        datePicker.setVisible(true);                                            //deixa visivel
+        cntForm.add(datePicker, BorderLayout.EAST);                             //para ficar ao xxxx do formulario
+
+
+        janela.add(container_area);                     // Painel principal no centro
 
         janela.pack();
         janela.setVisible(true);

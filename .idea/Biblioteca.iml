@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="file://$USER_HOME$/Downloads/sqljdbc_12.8.1.0_ptb/sqljdbc_12.8/ptb/jars" />
@@ -70,6 +70,24 @@
         </SOURCES>
         <jarDirectory url="file://$USER_HOME$/Downloads/sqljdbc_12.8.1.0_enu/sqljdbc_12.8/enu/jars" recursive="false" />
         <jarDirectory url="file://$USER_HOME$/Downloads/sqljdbc_12.8.1.0_enu/sqljdbc_12.8/enu/jars" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/jdatepicker-1.3.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/mssql-jdbc-12.8.1.jre11.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
   </component>
