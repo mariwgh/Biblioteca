@@ -27,7 +27,7 @@ No momento do empréstimo, o campo devolucaoEfetiva ficará nulo, pois o livro a
 */
 
 public class Emprestimos {
-    public static JButton realizar, voltar;
+    public static JButton realizar;
     public static JPanel container, painelCampos;
     public static JTextField inputIdLeitor, inputNumExemplar, inputDevolucaoPrevista;
     public static int idExemplar;
@@ -118,7 +118,7 @@ public class Emprestimos {
 
         // Criar um painel interno para os campos de texto e labels
         JPanel painelBotoes = new JPanel();
-        //painelBotoes.add(voltar , BorderLayout.NORTH);
+        painelBotoes.add(Login.voltar , BorderLayout.NORTH);
         painelBotoes.add(realizar , BorderLayout.SOUTH);
 
         container.add(painelBotoes, BorderLayout.SOUTH);        // botao em baixo
@@ -130,6 +130,7 @@ public class Emprestimos {
 
     public static JPanel realizarTudo() throws Exception {
         montar();
+        container.setPreferredSize(new Dimension(891 ,478 ));
         return container;
     }
 

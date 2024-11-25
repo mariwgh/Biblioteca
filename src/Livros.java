@@ -47,7 +47,12 @@ public class Livros {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
-
+                    if (tabelaResultadoSql != null){
+                        tabelaResultadoSql.removeAll();
+                        container.remove(tabelaResultadoSql);
+                        container.repaint();
+                        container.revalidate();
+                    }
                     mostrarInputs();
                 }
                 catch (Exception erro){
@@ -63,6 +68,7 @@ public class Livros {
         panelCampos.add(realizar , BorderLayout.NORTH);
         panelCampos.add(selecionar , BorderLayout.NORTH);
         panelCampos.add(operacao , BorderLayout.NORTH);
+        panelCampos.add(Login.voltar , BorderLayout.NORTH);
 
         // painel principal para organizar campos e botão
 
@@ -179,8 +185,8 @@ public class Livros {
 
 
     public static JPanel realizarTudo() throws Exception{
-        //container.setPreferredSize(new Dimension(699 , ));
         montar();
+        container.setPreferredSize(new Dimension(891 ,478 ));
         //container.setLayout(new FlowLayout(FlowLayout.LEFT)); // Alinha os componentes à esquerda de maneira compacta
         //container.setSize(300,200); // Limita o tamanho do painel
         return container;
@@ -190,11 +196,6 @@ public class Livros {
         Statement comandoSql;
         switch (opcao){
             case "INCLUIR":
-                if (tabelaResultadoSql != null) {
-                    container.remove(tabelaResultadoSql);
-                    container.repaint();
-                    container.revalidate();
-                }
 
                 //PASSAR COMO PARAMETRO O INSERT INTO COM OS DADOS
                 String sql = "INSERT INTO SisBib.Livro(codLivro , titulo , idAutor , idArea) values (? , ? , ? , ?)";
@@ -204,7 +205,6 @@ public class Livros {
                     preparedStatement.setString(2 , inpTitulo.getText());   //  muda o segundi '?'
                     preparedStatement.setInt(3 , Integer.parseInt(inpAutor.getText()));
                     preparedStatement.setInt(4 , Integer.parseInt(inpArea.getText()));
-                    System.out.println(sql);
                     int linhasAfetadas = preparedStatement.executeUpdate();
                     System.out.println("Linhas afetadas: " + linhasAfetadas);
                     JOptionPane.showMessageDialog(null , "Linhas afetadas: " + linhasAfetadas);
@@ -214,13 +214,8 @@ public class Livros {
                     JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
                 break;
-            case "DELETAR":
 
-                if (tabelaResultadoSql != null) {   //ESSA BOMBA NÃO FUNCIONA MANO AAAAAAAAAA
-                    container.remove(tabelaResultadoSql);
-                    container.repaint();
-                    container.revalidate();
-                }
+            case "DELETAR":
 
                 if (inpId.getText().equals("")){
                     sql = "delete from SisBib.Livro where titulo= ?";
@@ -260,144 +255,31 @@ public class Livros {
                 break;
 
             case "ALTERAR":
-                if (tabelaResultadoSql != null) {
-                    container.remove(tabelaResultadoSql);
-                    container.repaint();
-                    container.revalidate();
-                }
+                sql = "update SisBib.Exemplar set " + cbxNovo.getSelectedItem() + " = ? where " + cbxAntigo.getSelectedItem() + " = ? and idBiblioteca = " + idBibliotecaEscolhida;
+                try {
+                    PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
 
-                try{
-                    PreparedStatement preparedStatement = null;
-                    String dadoAntigoLocal = cbxAntigo.getSelectedItem().toString();
-                    String dadoNovoLocal = cbxNovo.getSelectedItem().toString();
-
-                    if(dadoAntigoLocal.equals("Código livro")){
-                        if (dadoNovoLocal.equals("Código livro")){
-                            sql = "update SisBib.Livro set codLivro = ? where codLivro = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setString(1 , dadoNovo.getText());
-                            preparedStatement.setString(2 , dadoAntigo.getText());
-                        }
-                        else if(dadoNovoLocal.equals("Título")){
-                            sql = "update SisBib.Livro set titulo = ? where codLivro = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setString(1 , dadoNovo.getText());
-                            preparedStatement.setString(2 , dadoAntigo.getText());
-                        }
-                        else if(dadoNovoLocal.equals("Id autor")){
-                            sql = "update SisBib.Livro set idAutor = ? where codLivro = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setInt(1 , Integer.parseInt(dadoNovo.getText()));
-                            preparedStatement.setString(2 , dadoAntigo.getText());
-                        }
-                        else if(dadoNovoLocal.equals("Id área")){
-                            sql = "update SisBib.Livro set idArea = ? where codLivro = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setInt(1 , Integer.parseInt(dadoNovo.getText()));
-                            preparedStatement.setString(2 , dadoAntigo.getText());
-                        }
-                    }
-
-                    else if(dadoAntigoLocal.equals("Título")){
-
-                        if (dadoNovoLocal.equals("Código livro")){
-                            sql = "update SisBib.Livro set codLivro = ? where titulo = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setString(1 , dadoNovo.getText());
-                            preparedStatement.setString(2 , dadoAntigo.getText());
-                        }
-                        else if(dadoNovoLocal.equals("Título")){
-                            sql = "update SisBib.Livro set titulo = ? where titulo = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setString(1 , dadoNovo.getText());
-                            preparedStatement.setString(2 , dadoAntigo.getText());
-                        }
-                        else if(dadoNovoLocal.equals("Id autor")){
-                            sql = "update SisBib.Livro set idAutor = ? where titulo = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setInt(1 , Integer.parseInt(dadoNovo.getText()));
-                            preparedStatement.setString(2 , dadoAntigo.getText());
-                        }
-                        else if(dadoNovoLocal.equals("Id área")){
-                            sql = "update SisBib.Livro set idArea = ? where titulo = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setInt(1 , Integer.parseInt(dadoNovo.getText()));
-                            preparedStatement.setString(2 , dadoAntigo.getText());
-                        }
-                    }
-                    else if (dadoAntigoLocal.equals("Id autor")){
-
-                        if (dadoNovoLocal.equals("Código livro")) {
-                            sql = "update SisBib.Livro set codLivro = ? where idAutor = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setString(1, dadoNovo.getText());
-                            preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));
-                        }
-                        else if(dadoNovoLocal.equals("Título")){
-                            sql = "update SisBib.Livro set titulo = ? where idAutor = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setString(1 , dadoNovo.getText());
-                            preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));
-                        }
-                        else if(dadoNovoLocal.equals("Id autor")){
-                            sql = "update SisBib.Livro set idAutor = ? where idAutor = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setInt(1, Integer.parseInt(dadoNovo.getText()));
-                            preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));
-                        }
-                        else if(dadoNovoLocal.equals("Id área")){
-                            sql = "update SisBib.Livro set idArea = ? where idAutor = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setInt(1, Integer.parseInt(dadoNovo.getText()));
-                            preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));
-                        }
-                    }
-                    else if (dadoAntigoLocal.equals("Id área")) {
-
-                        if (dadoNovoLocal.equals("Código livro")){
-                            sql = "update SisBib.Livro set codLivro = ? where idArea = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setString(1 , dadoNovo.getText());
-                            preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));
-                        }
-                        else if(dadoNovoLocal.equals("Título")){
-                            sql = "update SisBib.Livro set titulo = ? where idArea = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setString(1 , dadoNovo.getText());
-                            preparedStatement.setInt(2 , Integer.parseInt(dadoAntigo.getText()));
-                        }
-                        else if(dadoNovoLocal.equals("Id autor")){
-                            sql = "update SisBib.Livro set idAutor = ? where idArea = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setInt(1, Integer.parseInt(dadoNovo.getText()));
-                            preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));
-                        }
-                        else if(dadoNovoLocal.equals("Id área")){
-                            sql = "update SisBib.Livro set idArea = ? where idArea = ?";
-                            preparedStatement = Login.conexao.prepareStatement(sql);
-                            preparedStatement.setInt(1, Integer.parseInt(dadoNovo.getText()));
-                            preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));
-                        }
-                    }
+                    preparedStatement.setInt(1, Integer.parseInt(dadoNovo.getText()));      //dado novo
+                    preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));      //dado antigo
 
                     int linhasAfetadas = preparedStatement.executeUpdate();
-                    //System.out.println("Linhas afetadas: " + linhasAfetadas);
-                    JOptionPane.showMessageDialog(null ,"Linhas afetadas: " + linhasAfetadas );
+                    System.out.println("Linhas afetadas: " + linhasAfetadas);
+                    JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                    JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
-
-                catch(Exception erro){
-                    JOptionPane.showMessageDialog(null , erro.getMessage());
-                }
+                break;
 
             case "BUSCAR":
                 String id = inpId.getText();
                 String titulo = inpTitulo.getText();
 
-                if (tabelaResultadoSql != null) {
+                /*if (tabelaResultadoSql != null) {
                     container.remove(tabelaResultadoSql);
                     container.repaint();
                     container.revalidate();
-                }
+                }*/
 
                 if (titulo.equals("") && id.equals("")){
                     try{
