@@ -27,7 +27,7 @@ public class Login {
     public static JTabbedPane abas;
     public static JTextField servidor, banco_de_dados , usuario;
     public static JPasswordField senha;
-    public static JButton conectar , verSenha , selecionarBiblioteca;
+    public static JButton conectar , verSenha , selecionarBiblioteca , voltar;
     public static JLabel LServidor , LBD , LUsuario , LSenha;
     public static JComboBox cbx;
     public static Connection conexao;
@@ -44,10 +44,12 @@ public class Login {
     public static void montar() {
         janela = new JFrame();
         janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        janela.setPreferredSize(new Dimension(891,478));
         janela.setTitle("Sistema de Biblioteca");
         janela.setLayout(new BorderLayout());
 
         abas = new JTabbedPane();
+        abas.addTab("Início" , new JPanel());
         abas.addTab("Livros", new JPanel());
         abas.addTab("Exemplares", new JPanel());
         abas.addTab("Empréstimos", new JPanel());
@@ -57,33 +59,29 @@ public class Login {
             @Override
             public void stateChanged(ChangeEvent e) {
                 int index = abas.getSelectedIndex();  // Obtém o índice da aba selecionada
-                System.out.println("Aba selecionada: " + index);  // Exibe o índice da aba selecionada
-
-                // Ações baseadas na aba selecionada
-                if (index == 0) {
-                    System.out.println("Redirecionando para Livros...");
+                if (index == 0){
+                    mostrarTelaLogin();
+                }
+                else if (index == 1) {
                     try {
                         mostrarLivros();
                     } catch (Exception ex) {
                         System.out.println(ex.getMessage());
                     }
-                } else if (index == 1) {
-                    System.out.println("Redirecionando para Exemplares...");
+                } else if (index == 2) {
                     try {
                         mostrarExemplares();
                     } catch (Exception ex) {
                         System.out.println(ex.getMessage());
                     }
                 }
-                else if (index == 2) {
-                    System.out.println("Redirecionando para Empréstimos...");
+                else if (index == 3) {
                     try {
                         mostrarEmprestimos();
                     } catch (Exception ex) {
                         System.out.println(ex.getMessage());
                     }
-                } else if (index == 3) {
-                    System.out.println("Redirecionando para Devoluções...");
+                } else if (index == 4) {
                     try {
                         mostrarDevolucoes();
                     } catch (Exception ex) {
@@ -99,6 +97,15 @@ public class Login {
         janela.add(container_area, BorderLayout.CENTER);     // Painel principal no centro
 
         mostrarTelaLogin();
+
+        voltar = new JButton("Voltar");
+        voltar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mostrarTelaLogin();
+                abas.setEnabled(false);
+            }
+        });
 
         // Configurações finais
         janela.pack();
@@ -281,7 +288,10 @@ public class Login {
     public static void verificar() throws SQLException{
         if (conexao != null){
             JOptionPane.showMessageDialog(null , "Login feito com sucesso!");
+            System.out.println(janela.getHeight() + " é a altura");
+            System.out.println(janela.getWidth() + " é a largura");
             depoisLogin();
+
         }
         else{
             System.out.println("Não entra no if para montar com o combo box");
@@ -294,10 +304,10 @@ public class Login {
         //janela.removeAll();
         JPanel painelLivros = objetoLivro.realizarTudo();
         container_area.add(painelLivros , BorderLayout.CENTER);
-        janela.pack();
-        //container_area.add(cbx , BorderLayout.SOUTH);
         janela.add(container_area);
         janela.pack();
+        //container_area.add(cbx , BorderLayout.SOUTH);
+
         return null;
     }
 

@@ -12,7 +12,7 @@ numeroExemplar int*/
 
 public class Exemplares {
     public static JComboBox operacao;
-    public static JButton realizar, voltar, selecionar;
+    public static JButton realizar, selecionar;
     public static JPanel container, painelCampos;
     public static JTextField inputCodLivro, inputNumExemplar, inputIdExemplar;
     public static JTable tabelaResultadoSql;
@@ -67,7 +67,7 @@ public class Exemplares {
 
         // Criar um painel interno para os campos de texto e labels
         painelBotoes = new JPanel();
-        //painelBotoes.add(voltar , BorderLayout.NORTH);
+        painelBotoes.add(Login.voltar , BorderLayout.NORTH);
         painelBotoes.add(operacao , BorderLayout.NORTH);
         painelBotoes.add(selecionar , BorderLayout.NORTH);
         painelBotoes.add(realizar , BorderLayout.NORTH);
@@ -190,6 +190,7 @@ public class Exemplares {
 
     public static JPanel realizarTudo() throws Exception {
         montarBotoesPrincipais();
+        container.setPreferredSize(new Dimension(891 ,478 ));
         return container;
     }
 
