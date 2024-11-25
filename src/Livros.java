@@ -100,7 +100,7 @@ public class Livros {
         if (opcao.equals("BUSCAR")) {
             inpId = new JTextField(10);
             inpTitulo = new JTextField(10);
-            JLabel id = new JLabel("Digite o id do livro: ");
+            JLabel id = new JLabel("Digite o código do livro: ");
             JLabel titulo = new JLabel("Digite o título do livro: ");
 
             painelCampos.removeAll();
@@ -271,7 +271,6 @@ public class Livros {
                     System.out.println(ex.getMessage());
                     JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
-                break;
 
             case "BUSCAR":
                 String codLivro = inpId.getText();
