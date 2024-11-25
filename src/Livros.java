@@ -13,14 +13,12 @@ public class Livros {
     public static JButton realizar , voltar , selecionar;
     public static int idBibliotecaEscolhida;
     public static JPanel container , painelCampos;
-    public static JTextField inpId, inpTitulo , inpAutor , inpArea , dadoAntigo , dadoNovo;
+    public static JTextField inpCodLivro, inpTitulo , inpAutor , inpArea , dadoAntigo , dadoNovo;
     public static JTable tabelaResultadoSql;
     //public static JLabel mensagem;
     public static String opcao;
 
-   /* public static void main(String[] args){
-        montar();
-    }*/
+
     public static void montar(){
         JPanel panelCampos;
 
@@ -98,7 +96,7 @@ public class Livros {
 
 
         if (opcao.equals("BUSCAR")) {
-            inpId = new JTextField(10);
+            inpCodLivro = new JTextField(10);
             inpTitulo = new JTextField(10);
             JLabel id = new JLabel("Digite o código do livro: ");
             JLabel titulo = new JLabel("Digite o título do livro: ");
@@ -106,26 +104,26 @@ public class Livros {
             painelCampos.removeAll();
             painelCampos.setLayout(new GridLayout(2, 2, 5, 5)); // Layout de formulário simples
             painelCampos.add(id);
-            painelCampos.add(inpId);
+            painelCampos.add(inpCodLivro);
             painelCampos.add(titulo);
             painelCampos.add(inpTitulo);
 
             container.add(painelCampos, BorderLayout.CENTER);
         }
         else if (opcao.equals("INCLUIR")) {
-            inpId = new JTextField(10);
+            inpCodLivro = new JTextField(10);
             inpTitulo = new JTextField(10);
             inpAutor = new JTextField(10);
             inpArea = new JTextField(10);
-            JLabel id = new JLabel("Digite o id do livro: ");
+            JLabel codLivro = new JLabel("Digite o código do livro: ");
             JLabel titulo = new JLabel("Digite o título do livro: ");
             JLabel idAutor = new JLabel("Digite o id do autor: ");
             JLabel idArea = new JLabel("Digite o id da área que o livro pertence: ");
 
             painelCampos.removeAll();
             painelCampos.setLayout(new GridLayout(4, 2, 5, 5)); // Layout de formulário completo
-            painelCampos.add(id);
-            painelCampos.add(inpId);
+            painelCampos.add(codLivro);
+            painelCampos.add(inpCodLivro);
             painelCampos.add(titulo);
             painelCampos.add(inpTitulo);
             painelCampos.add(idAutor);
@@ -140,7 +138,7 @@ public class Livros {
             JLabel LTitulo = new JLabel("Digite o título do livro: ");
             JLabel ou = new JLabel("OU");
             inpTitulo = new JTextField(10);
-            inpId = new JTextField(10);
+            inpCodLivro = new JTextField(10);
 
             painelCampos.removeAll();
             painelCampos.setLayout(new GridLayout(3, 2, 5, 5));
@@ -149,7 +147,7 @@ public class Livros {
             painelCampos.add(ou);
             painelCampos.add(new JPanel());
             painelCampos.add(LID);
-            painelCampos.add(inpId);
+            painelCampos.add(inpCodLivro);
 
             container.add(painelCampos, BorderLayout.CENTER);
         }
@@ -199,7 +197,7 @@ public class Livros {
                 String sql = "INSERT INTO SisBib.Livro(codLivro , titulo , idAutor , idArea) values (? , ? , ? , ?)";
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
-                    preparedStatement.setString(1, inpId.getText());
+                    preparedStatement.setString(1, inpCodLivro.getText());
                     preparedStatement.setString(2, inpTitulo.getText());
                     preparedStatement.setInt(3, Integer.parseInt(inpAutor.getText()));
                     preparedStatement.setInt(4, Integer.parseInt(inpArea.getText()));
@@ -215,7 +213,7 @@ public class Livros {
                 break;
 
             case "DELETAR":
-                if (inpId.getText().equals("")) {
+                if (inpCodLivro.getText().equals("")) {
                     sql = "delete from SisBib.Livro where titulo= ?";
 
                     try {
@@ -233,7 +231,7 @@ public class Livros {
 
                     try {
                         PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
-                        preparedStatement.setString(1, inpId.getText());
+                        preparedStatement.setString(1, inpCodLivro.getText());
                         int linhasAfetadas = preparedStatement.executeUpdate();
                         //System.out.println("Linhas afetadas: " + linhasAfetadas);
                         JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
@@ -248,21 +246,26 @@ public class Livros {
                 break;
 
             case "ALTERAR":
-                sql = "update SisBib.Exemplar set " + cbxNovo.getSelectedItem() + " = ? where " + cbxAntigo.getSelectedItem() + " = ? and idBiblioteca = " + idBibliotecaEscolhida;
+                sql = "update SisBib.Exemplar set " + cbxNovo.getSelectedItem().toString() + " = ? where " + cbxAntigo.getSelectedItem().toString() + " = ? and idBiblioteca = " + idBibliotecaEscolhida;
+                System.out.println(sql);
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
 
-                    if (cbxNovo.getSelectedItem() == "titulo" || cbxNovo.getSelectedItem() == "codLivro") {
+                    if (cbxNovo.getSelectedItem() == "titulo" || cbxNovo.getSelectedItem() == "codLivro" ) {
                         preparedStatement.setString(1, dadoNovo.getText());
-                    } else {
+                    }
+                    else if (cbxNovo.getSelectedItem() == "idAutor" || cbxNovo.getSelectedItem() == "idArea" ) {
                         preparedStatement.setInt(1, Integer.parseInt(dadoNovo.getText()));      //dado novo
                     }
 
                     if (cbxAntigo.getSelectedItem() == "titulo" || cbxAntigo.getSelectedItem() == "codLivro") {
                         preparedStatement.setString(2, dadoAntigo.getText());
-                    } else {
+                    }
+                    else if (cbxAntigo.getSelectedItem() == "idAutor" || cbxAntigo.getSelectedItem() == "idArea" )  {
                         preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));      //dado novo
                     }
+
+                    System.out.println(sql);
 
                     int linhasAfetadas = preparedStatement.executeUpdate();
                     System.out.println("Linhas afetadas: " + linhasAfetadas);
@@ -271,9 +274,10 @@ public class Livros {
                     System.out.println(ex.getMessage());
                     JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
+                break;
 
             case "BUSCAR":
-                String codLivro = inpId.getText();
+                String codLivro = inpCodLivro.getText();
                 String titulo = inpTitulo.getText();
                 System.out.println(idBibliotecaEscolhida + " é o id da biblioteca");
 
@@ -308,9 +312,9 @@ public class Livros {
                         linhas += 1;    //para colocar as colunas também
 
                         String[] colunas = new String[]{"codLivro", "titulo", "idAutor", "idArea"};
-                        String[][] resultadoSQL = new String[linhas][4]; //com x linhas e cada linha tem 4 campos (colunas)
+                        String[][] resultadoSQL = new String[linhas][4];    //com x linhas e cada linha tem 4 campos (colunas)
 
-                        resultadoDoSelect.beforeFirst();        //volta para o inicio para guardar os dados no resultadoSQL
+                        resultadoDoSelect.beforeFirst();                    //volta para o inicio para guardar os dados no resultadoSQL
 
                         //definir o "nome das colunas"
                         resultadoSQL[0][0] = colunas[0];
