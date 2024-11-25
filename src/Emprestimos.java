@@ -166,7 +166,6 @@ public class Emprestimos {
 
             System.out.println(sql);
             int linhasAfetadas = preparedStatement.executeUpdate();
-            System.out.println("Linhas afetadas: " + linhasAfetadas);
             JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());

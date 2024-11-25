@@ -126,8 +126,18 @@ values
 
 delete SisBib.Emprestimo where idEmprestimo = 10
 
-select idExemplar from SisBib.Exemplar where numeroExemplar = 6 and idBiblioteca = 2
+select * from SisBib.Exemplar where idExemplar = 13 and idBiblioteca = 2
 
+update SisBib.Emprestimo set devolucaoEfetiva = '30-11-2024' where idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
+
+
+--IDLEITOR IDLIVRO NUMEXEMPLAR BIBLIOTECA
+update SisBib.Emprestimo set devolucaoEfetiva = '25-11-2024' where idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
+select idLeitor from SisBib.Emprestimo where devolucaoPrevista < devolucaoEfetiva and idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
+
+update SisBib.Emprestimo set devolucaoEfetiva = NULL where idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
+
+SELECT * FROM SisBib.Exemplar
 
 select * from SisBib.Exemplar
 --ser preenchida no programa
@@ -154,6 +164,8 @@ insert into SisBib.Leitor
 values
 ('Maria Oliveira', 'N'),
 ('Carlos Silva', 'S')
+
+update SisBib.Leitor set estaSuspenso = 'N' where idLeitor = 2
 
 
 select * from SisBib.Livro
@@ -217,7 +229,7 @@ begin
 	-- if foi emprestado (esta na tabela emprestimo) e nao foi devolvido (data efetiva null)
 	if exists (select idExemplar from SisBib.Emprestimo where idExemplar = @idExemplarRequerido and devolucaoEfetiva is null)
 		begin
-			print 'Esse exemplar não pode ser emprestado pois ainda não foi devolvido.'
+			throw 50001, 'Esse exemplar não pode ser emprestado pois ainda não foi devolvido.', 1
 		end
 
 	else
@@ -237,6 +249,8 @@ begin
 			(@idLeitor, @idExemplarRequerido, @dataEmprestimo, null, @devolucaoPrevista)
 		end
 end
+
+DROP TRIGGER SisBib.exemplarDisponivel
 
 insert into SisBib.Emprestimo
 (idLeitor, idExemplar, dataEmprestimo, devolucaoEfetiva, devolucaoPrevista)
@@ -260,3 +274,5 @@ begin
 end
 
 exec SisBib.suspenderLeitor 1
+
+select idLeitor from SisBib.Emprestimo where devolucaoPrevista < devolucaoEfetiva and idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = JURPK1 and numeroExemplar = 6 and idBiblioteca = 2)
