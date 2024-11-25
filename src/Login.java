@@ -41,11 +41,10 @@ public class Login {
     }
 
     public static void montar() {
-        JPanel panelCampos;
-
         janela = new JFrame();
         janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         janela.setTitle("Sistema de Biblioteca");
+        janela.setLayout(new BorderLayout());
 
         abas = new JTabbedPane();
         abas.addTab("Livros", new JPanel());
@@ -93,6 +92,22 @@ public class Login {
             }
         });
 
+        janela.add(abas, BorderLayout.NORTH);
+
+        container_area = new JPanel();
+        janela.add(container_area, BorderLayout.CENTER);     // Painel principal no centro
+
+        mostrarTelaLogin();
+
+        // Configurações finais
+        janela.pack();
+        janela.setVisible(true);
+        //janela.setPreferredSize(new Dimension(699 , 469));
+    }
+
+    public static void mostrarTelaLogin() {
+        JPanel painelCamposLogin = new JPanel();
+        painelCamposLogin.setLayout(new GridLayout(6, 2, 5, 5)); // 6 linhas, 2 colunas
 
         LServidor = new JLabel("Servidor:");
         LServidor.setPreferredSize(new Dimension(50 , 50));
@@ -120,8 +135,7 @@ public class Login {
                         System.out.println("Deu certo!");
                         verificar();
                     }
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                 }
             }
@@ -152,40 +166,27 @@ public class Login {
             }
         });
 
-
         // Criar um painel interno para os campos de texto e labels
-        panelCampos = new JPanel();
-        panelCampos.setLayout(new GridLayout(6 ,2, 5, 5)); // 6 linhas, 2 colunas, espaçamento 5px
-        panelCampos.add(LServidor, BorderLayout.CENTER);
-        panelCampos.add(servidor, BorderLayout.CENTER);
-        panelCampos.add(LBD, BorderLayout.CENTER);
-        panelCampos.add(banco_de_dados, BorderLayout.CENTER);
-        panelCampos.add(LUsuario,BorderLayout.CENTER);
-        panelCampos.add(usuario,BorderLayout.CENTER);
-        panelCampos.add(LSenha,BorderLayout.CENTER);
-        panelCampos.add(senha,BorderLayout.CENTER);
-        panelCampos.add(conectar , BorderLayout.SOUTH);
-        panelCampos.add(verSenha , BorderLayout.SOUTH);
-        panelCampos.add(cbx , BorderLayout.CENTER);
+        painelCamposLogin.add(LServidor, BorderLayout.CENTER);
+        painelCamposLogin.add(servidor, BorderLayout.CENTER);
+        painelCamposLogin.add(LBD, BorderLayout.CENTER);
+        painelCamposLogin.add(banco_de_dados, BorderLayout.CENTER);
+        painelCamposLogin.add(LUsuario,BorderLayout.CENTER);
+        painelCamposLogin.add(usuario,BorderLayout.CENTER);
+        painelCamposLogin.add(LSenha,BorderLayout.CENTER);
+        painelCamposLogin.add(senha,BorderLayout.CENTER);
+        painelCamposLogin.add(conectar , BorderLayout.SOUTH);
+        painelCamposLogin.add(verSenha , BorderLayout.SOUTH);
+        painelCamposLogin.add(cbx , BorderLayout.CENTER);
 
-
-        // painel principal para organizar campos e botão
-
-        container_area = new JPanel();
-        container_area.add(panelCampos, BorderLayout.CENTER); // Campos no centro
-
-        //janela.setTitle("Login ao BD");
-        janela.setLayout(new BorderLayout());
-        janela.add(abas, BorderLayout.NORTH);           // Abas no topo
-
+        // Painel principal para organizar o login e o calendário
+        JPanel painelLogin = new JPanel(new BorderLayout());
+        painelLogin.add(painelCamposLogin, BorderLayout.CENTER);
 
         //calendario ao lado direto? do login
-        Container cntForm = janela.getContentPane();                              // acessa a área de 'desenho'
-        cntForm.setLayout(new BorderLayout());
         JPanel panelCalendario = new JPanel();                                      // Criação de um painel para juncao o calendário e o texto
         panelCalendario.setLayout(new BoxLayout(panelCalendario, BoxLayout.Y_AXIS)); // Layout para empilhar os componentes verticalmente
         panelCalendario.add(new JLabel("Check-In Date: "), BorderLayout.EAST);
-        //espaco
         UtilDateModel model = new UtilDateModel();                               //cria um modelo de dados para o componente de seleção de data
         Properties p = new Properties();                                        //cria um objeto de propriedades que será usado para personalizar o painel de seleção de datas
         p.put("text.today", "Today");
@@ -193,28 +194,23 @@ public class Login {
         p.put("text.year", "Year");                                             //define os textos personalizados para o painel de seleção de datas
         JDatePanelImpl datePanel = new JDatePanelImpl(model, p);                //cria o painel de calendário com base no UtilDateModel (modelo de dados) e nas propriedades configuradas
         JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());  //cria o componente DatePicker propriamente dito (escolhe data)
-
         model.addChangeListener(e -> {
-            java.util.Date dataSelecionada = (java.util.Date) datePicker.getModel().getValue();
-            setDataCheckIn(dataSelecionada);
+            dataSelecionada = (java.util.Date) datePicker.getModel().getValue();
         });
-
         datePicker.setBounds(110, 100, 200, 25);            //define a posição
         model.setSelected(true);                                                //ativa o modelo, indicando que uma data foi selecionada
         datePicker.setVisible(true);                                            //deixa visivel
+
         panelCalendario.add(datePicker);
-        cntForm.add(panelCalendario, BorderLayout.EAST);
+        painelLogin.add(panelCalendario, BorderLayout.EAST); // Adiciona o calendário no lado direito
 
+        // Adiciona o painel de login ao container principal
+        container_area.removeAll();
+        container_area.setLayout(new BorderLayout());
+        container_area.add(painelLogin, BorderLayout.CENTER);
 
-        // Configurações finais
-        janela.pack();                                                             // ajusta o tamanho da janela ao conteúdo
-        janela.setVisible(true);                                                   // torna a janela visível
-
-        janela.add(container_area);                     // Painel principal no centro
-
-        janela.pack();
-        janela.setVisible(true);
-        //janela.setPreferredSize(new Dimension(699 , 469));
+        container_area.revalidate();
+        container_area.repaint();
     }
 
     public static void getConnection() throws SQLException {
@@ -356,9 +352,5 @@ public class Login {
             System.out.println(ex.getMessage());
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
-    }
-
-    public static void setDataCheckIn(java.util.Date data) {
-        dataSelecionada = data;
     }
 }

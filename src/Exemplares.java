@@ -160,9 +160,9 @@ public class Exemplares {
                 inputCodLivro = new JTextField(10);
                 inputNumExemplar = new JTextField(10);
 
-                JLabel idExemplar = new JLabel("Digite o id do exemplar: ");
-                JLabel codLivro = new JLabel("Digite o código do livro: ");
-                JLabel numExemplar = new JLabel("Digite o número do exemplar: ");
+                idExemplar = new JLabel("Digite o id do exemplar: ");
+                codLivro = new JLabel("Digite o código do livro: ");
+                numExemplar = new JLabel("Digite o número do exemplar: ");
 
                 painelCampos.removeAll();
                 painelCampos.setLayout(new GridLayout(5, 2, 5, 5)); // Layout de formulário simples

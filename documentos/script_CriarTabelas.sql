@@ -126,6 +126,8 @@ values
 
 delete SisBib.Emprestimo where idEmprestimo = 10
 
+select idExemplar from SisBib.Exemplar where numeroExemplar = 6 and idBiblioteca = 2
+
 
 select * from SisBib.Exemplar
 --ser preenchida no programa
@@ -195,6 +197,10 @@ inner join
 SisBib.Exemplar as ex on ex.idExemplar = em.idExemplar
 inner join
 SisBib.Livro as l on l.codLivro = ex.codLivro
+where em.devolucaoPrevista < em.devolucaoEfetiva
+
+
+drop view SisBib.atrasos
 
 select * from SisBib.atrasos
 
