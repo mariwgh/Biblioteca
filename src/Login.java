@@ -32,6 +32,7 @@ public class Login {
     public static JComboBox cbx;
     public static Connection conexao;
     public static int idBibliotecaEscolhida;
+    public static java.util.Date dataSelecionada;
 
     public static ResultSet resultadoSelect;
 
@@ -91,6 +92,7 @@ public class Login {
                 }
             }
         });
+
 
         LServidor = new JLabel("Servidor:");
         LServidor.setPreferredSize(new Dimension(50 , 50));
@@ -180,18 +182,33 @@ public class Login {
         //calendario ao lado direto? do login
         Container cntForm = janela.getContentPane();                              // acessa a área de 'desenho'
         cntForm.setLayout(new BorderLayout());
+        JPanel panelCalendario = new JPanel();                                      // Criação de um painel para juncao o calendário e o texto
+        panelCalendario.setLayout(new BoxLayout(panelCalendario, BoxLayout.Y_AXIS)); // Layout para empilhar os componentes verticalmente
+        panelCalendario.add(new JLabel("Check-In Date: "), BorderLayout.EAST);
         //espaco
         UtilDateModel model = new UtilDateModel();                               //cria um modelo de dados para o componente de seleção de data
         Properties p = new Properties();                                        //cria um objeto de propriedades que será usado para personalizar o painel de seleção de datas
-        p.put("text.today", "Today"); p.put("text.month", "Month");
+        p.put("text.today", "Today");
+        p.put("text.month", "Month");
         p.put("text.year", "Year");                                             //define os textos personalizados para o painel de seleção de datas
         JDatePanelImpl datePanel = new JDatePanelImpl(model, p);                //cria o painel de calendário com base no UtilDateModel (modelo de dados) e nas propriedades configuradas
         JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());  //cria o componente DatePicker propriamente dito (escolhe data)
+
+        model.addChangeListener(e -> {
+            java.util.Date dataSelecionada = (java.util.Date) datePicker.getModel().getValue();
+            setDataCheckIn(dataSelecionada);
+        });
+
         datePicker.setBounds(110, 100, 200, 25);            //define a posição
         model.setSelected(true);                                                //ativa o modelo, indicando que uma data foi selecionada
         datePicker.setVisible(true);                                            //deixa visivel
-        cntForm.add(datePicker, BorderLayout.EAST);                             //para ficar ao xxxx do formulario
+        panelCalendario.add(datePicker);
+        cntForm.add(panelCalendario, BorderLayout.EAST);
 
+
+        // Configurações finais
+        janela.pack();                                                             // ajusta o tamanho da janela ao conteúdo
+        janela.setVisible(true);                                                   // torna a janela visível
 
         janela.add(container_area);                     // Painel principal no centro
 
@@ -339,5 +356,9 @@ public class Login {
             System.out.println(ex.getMessage());
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
+    }
+
+    public static void setDataCheckIn(java.util.Date data) {
+        dataSelecionada = data;
     }
 }

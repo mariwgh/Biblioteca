@@ -94,7 +94,7 @@ public class Exemplares {
         opcao = operacao.getSelectedItem().toString();
 
         switch (opcao) {
-            case "INCLUIR" -> {
+            case "INCLUIR":
                 inputCodLivro = new JTextField(10);
                 inputNumExemplar = new JTextField(10);
 
@@ -110,9 +110,9 @@ public class Exemplares {
                 painelCampos.add(inputNumExemplar);
 
                 container.add(painelCampos, BorderLayout.CENTER);
-            }
+                break;
 
-            case "DELETAR" -> {
+            case "DELETAR":
                 JLabel idExemplar = new JLabel("Digite o ID do exemplar: ");
                 inputIdExemplar = new JTextField(10);
 
@@ -123,9 +123,9 @@ public class Exemplares {
                 painelCampos.add(inputIdExemplar);
 
                 container.add(painelCampos, BorderLayout.CENTER);
-            }
+                break;
 
-            case "ALTERAR" -> {
+            case "ALTERAR":
                 String[] dados = new String[]{"idExemplar", "idBiblioteca", "codLivro", "numeroExemplar"};
 
                 JLabel whereColuna = new JLabel("Qual é o dado de referência?");
@@ -153,9 +153,9 @@ public class Exemplares {
                 painelCampos.add(dadoNovo);
 
                 container.add(painelCampos, BorderLayout.CENTER);
-            }
+                break;
 
-            case "BUSCAR" -> {
+            case "BUSCAR":
                 inputIdExemplar = new JTextField(10);
                 inputCodLivro = new JTextField(10);
                 inputNumExemplar = new JTextField(10);
@@ -179,7 +179,7 @@ public class Exemplares {
                 painelCampos.add(inputNumExemplar);
 
                 container.add(painelCampos, BorderLayout.CENTER);
-            }
+                break;
         }
 
         // Atualizar o layout após alterações

@@ -10,6 +10,8 @@ import java.sql.*;
 /*codLivro varchar(6),
 numeroExemplar int*/
 
+//fazer o switch certo
+
 public class Devolucoes {
     public static JComboBox operacao;
     public static JButton realizar, voltar, selecionar;
