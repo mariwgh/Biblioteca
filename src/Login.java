@@ -18,7 +18,7 @@ import java.sql.Date;
 */
 
 import org.jdatepicker.impl.*;
-
+import java.text.SimpleDateFormat;
 
 // tela de login ao bd
 public class Login {
@@ -33,6 +33,7 @@ public class Login {
     public static Connection conexao;
     public static int idBibliotecaEscolhida;
     public static java.util.Date dataSelecionada;
+    public static String dataFormatada;
 
     public static ResultSet resultadoSelect;
 
@@ -196,6 +197,7 @@ public class Login {
         JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());  //cria o componente DatePicker propriamente dito (escolhe data)
         model.addChangeListener(e -> {
             dataSelecionada = (java.util.Date) datePicker.getModel().getValue();
+            dataFormatada = formatarData(dataSelecionada);
         });
         datePicker.setBounds(110, 100, 200, 25);            //define a posição
         model.setSelected(true);                                                //ativa o modelo, indicando que uma data foi selecionada
@@ -352,5 +354,13 @@ public class Login {
             System.out.println(ex.getMessage());
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
+    }
+
+    public static String formatarData(java.util.Date data) {
+        if (data == null) {
+            return null;
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        return formatter.format(data);
     }
 }

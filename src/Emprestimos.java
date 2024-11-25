@@ -10,7 +10,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import java.util.Date;
 import java.util.Properties;
+
+import static src.Login.formatarData;
 
 /*
 4.	Empréstimos de exemplares de livros da biblioteca informada no Login –
@@ -28,7 +31,7 @@ public class Emprestimos {
     public static JPanel container, painelCampos;
     public static JTextField inputIdLeitor, inputNumExemplar, inputDevolucaoPrevista;
     public static int idExemplar;
-    public static java.util.Date dataPrevista;
+    public static String dataPrevista;
     public static JTable tabelaResultadoSqlAtrasos;
 
     // Inicializar o valor de idBibliotecaEscolhida
@@ -40,9 +43,9 @@ public class Emprestimos {
     }
 
     // Inicializar o valor de dataCheckIn
-    public static java.util.Date dataCheckIn;
+    public static String dataCheckIn;
     static {
-        dataCheckIn = Login.dataSelecionada;
+        dataCheckIn = Login.dataFormatada;
     }
 
 
@@ -85,7 +88,7 @@ public class Emprestimos {
         JDatePanelImpl datePanel = new JDatePanelImpl(model, p);                //cria o painel de calendário com base no UtilDateModel (modelo de dados) e nas propriedades configuradas
         JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());  //cria o componente DatePicker propriamente dito (escolhe data)
         model.addChangeListener(e -> {
-            dataPrevista = (java.util.Date) datePicker.getModel().getValue();
+            dataPrevista = formatarData((Date) datePicker.getModel().getValue());
         });
         datePicker.setBounds(110, 100, 200, 25);            //define a posição
         model.setSelected(true);                                                //ativa o modelo, indicando que uma data foi selecionada
@@ -152,13 +155,13 @@ public class Emprestimos {
             return;
         }
 
-        String sql = "INSERT INTO SisBib.Emprestimo (idLeitor, idExemplar, dataEmprestimo, devolucaoEfetiva, devolucaoPrevista) values (? , ? , ? , NULL , ?)";
+        String sql = "INSERT INTO SisBib.Emprestimo (idLeitor, idExemplar, dataEmprestimo, devolucaoEfetiva, devolucaoPrevista) values (? , ? ,  ? , NULL , ?)";
         try {
             PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
             preparedStatement.setInt(1, Integer.parseInt(inputIdLeitor.getText()));
             preparedStatement.setInt(2, idExemplar);
-            preparedStatement.setDate(3, (Date) dataCheckIn);
-            preparedStatement.setDate(4, (Date) dataPrevista);
+            preparedStatement.setString(3, String.valueOf(dataCheckIn));
+            preparedStatement.setString(4, String.valueOf(dataPrevista));
 
             System.out.println(sql);
             int linhasAfetadas = preparedStatement.executeUpdate();
