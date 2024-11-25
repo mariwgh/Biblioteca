@@ -24,8 +24,7 @@ public class Exemplares {
     public static int idBibliotecaEscolhida;
     static {
         // Chamando o método no bloco estático da classe login
-        Login.setIdBibliotecaEscolhida();
-        idBibliotecaEscolhida = Login.idBibliotecaEscolhida; //pega o valor definido dps de definir em login
+        idBibliotecaEscolhida = Login.setIdBibliotecaEscolhida();; //pega o valor definido dps de definir em login
     }
 
 
@@ -55,13 +54,30 @@ public class Exemplares {
         realizar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //realizar a função escolhida no cbx, pegar os dados
-                //dos campos do formulario e fazer a consulta
                 try {
                     consultas();
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
+            }
+        });
+
+        selecionar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    if (tabelaResultadoSql != null){
+                        tabelaResultadoSql.removeAll();
+                        container.remove(tabelaResultadoSql);
+                        container.repaint();
+                        container.revalidate();
+                    }
+                    consultas();
+                }
+                catch (Exception erro){
+                    System.out.println(erro.getMessage());
+                }
+
             }
         });
 
@@ -254,6 +270,7 @@ public class Exemplares {
                 String idExemplar = inputIdExemplar.getText();
                 String codLivro = inputCodLivro.getText();
                 String numExemplar = inputNumExemplar.getText();
+                System.out.println(idBibliotecaEscolhida + " é o id da biblioteca");
 
                 String stringSql = "select * from SisBib.Exemplar where idBiblioteca = " + idBibliotecaEscolhida;
 
@@ -276,6 +293,7 @@ public class Exemplares {
                 }
 
                 System.out.println(stringSql);
+
 
                 try {
                     int linhas = 0;
@@ -310,20 +328,24 @@ public class Exemplares {
                             resultadoSQL[i][3] = resultadoDoSelect.getString("numeroExemplar");
                         }
 
-                        DefaultTableModel modelo = new DefaultTableModel(resultadoSQL, colunas);
-                        tabelaResultadoSql = new JTable(modelo);
-                        //tabelaResultadoSql.setVisible(true);
+                        if (resultadoDoSelect != null){
+                            DefaultTableModel modelo = new DefaultTableModel(resultadoSQL, colunas);
+                            tabelaResultadoSql = new JTable(modelo);
+                            //tabelaResultadoSql.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+                            container.add(tabelaResultadoSql);
+                            container.setVisible(true);
+                        }
+                        else{
+                            System.out.println("está dando nulo");
+                            JOptionPane.showMessageDialog(null , "o resultado do selct deu nulo");
+                        }
 
-                        //JScrollPane scrollPane = new JScrollPane(tabelaResultadoSql);
-                        //container.add(scrollPane, BorderLayout.CENTER);
-
-                        container.add(tabelaResultadoSql);
-                        container.setVisible(true);
                     }
                     else {
                         System.out.println("o resultado está dando nulo");
                     }
-                } catch (SQLException ex) {
+                }
+                catch (SQLException ex) {
                     System.out.println(ex.getMessage());
                     JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
