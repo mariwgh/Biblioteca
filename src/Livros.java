@@ -100,7 +100,7 @@ public class Livros {
         if (opcao.equals("BUSCAR")) {
             inpId = new JTextField(10);
             inpTitulo = new JTextField(10);
-            JLabel id = new JLabel("Digite o id do livro: ");
+            JLabel id = new JLabel("Digite o código do livro: ");
             JLabel titulo = new JLabel("Digite o título do livro: ");
 
             painelCampos.removeAll();
@@ -255,21 +255,117 @@ public class Livros {
                 break;
 
             case "ALTERAR":
-                sql = "update SisBib.Exemplar set " + cbxNovo.getSelectedItem() + " = ? where " + cbxAntigo.getSelectedItem() + " = ? and idBiblioteca = " + idBibliotecaEscolhida;
-                try {
-                    PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
-
-                    preparedStatement.setInt(1, Integer.parseInt(dadoNovo.getText()));      //dado novo
-                    preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));      //dado antigo
-
-                    int linhasAfetadas = preparedStatement.executeUpdate();
-                    System.out.println("Linhas afetadas: " + linhasAfetadas);
-                    JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
-                } catch (SQLException ex) {
-                    System.out.println(ex.getMessage());
-                    JOptionPane.showMessageDialog(null, ex.getMessage());
+                String dadoAntigoLocal = dadoAntigo.getText();
+                PreparedStatement preparedStatement;
+                String dadoNovoLocal = dadoNovo.getText();
+                if(dadoAntigoLocal.equals("Código livro")){
+                    if (dadoNovoLocal.equals("Código livro")){
+                        sql = "update SisBib.Livro set codLivro = ? where codLivro = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setString(1 , dadoNovo.getText());
+                        preparedStatement.setString(2 , dadoAntigo.getText());
+                    }
+                    else if(dadoNovoLocal.equals("Título")){
+                        sql = "update SisBib.Livro set titulo = ? where codLivro = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setString(1 , dadoNovo.getText());
+                        preparedStatement.setString(2 , dadoAntigo.getText());
+                    }
+                    else if(dadoNovoLocal.equals("Id autor")){
+                        sql = "update SisBib.Livro set idAutor = ? where codLivro = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setInt(1 , Integer.parseInt(dadoNovo.getText()));
+                        preparedStatement.setString(2 , dadoAntigo.getText());
+                    }
+                    else if(dadoNovoLocal.equals("Id área")){
+                        sql = "update SisBib.Livro set idArea = ? where codLivro = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setInt(1 , Integer.parseInt(dadoNovo.getText()));
+                        preparedStatement.setString(2 , dadoAntigo.getText());
+                    }
                 }
-                break;
+
+                else if(dadoAntigoLocal.equals("Título")){
+
+                    if (dadoNovoLocal.equals("Código livro")){
+                        sql = "update SisBib.Livro set codLivro = ? where titulo = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setString(1 , dadoNovo.getText());
+                        preparedStatement.setString(2 , dadoAntigo.getText());
+                    }
+                    else if(dadoNovoLocal.equals("Título")){
+                        sql = "update SisBib.Livro set titulo = ? where titulo = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setString(1 , dadoNovo.getText());
+                        preparedStatement.setString(2 , dadoAntigo.getText());
+                    }
+                    else if(dadoNovoLocal.equals("Id autor")){
+                        sql = "update SisBib.Livro set idAutor = ? where titulo = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setInt(1 , Integer.parseInt(dadoNovo.getText()));
+                        preparedStatement.setString(2 , dadoAntigo.getText());
+                    }
+                    else if(dadoNovoLocal.equals("Id área")){
+                        sql = "update SisBib.Livro set idArea = ? where titulo = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setInt(1 , Integer.parseInt(dadoNovo.getText()));
+                        preparedStatement.setString(2 , dadoAntigo.getText());
+                    }
+                }
+                else if (dadoAntigoLocal.equals("Id autor")){
+
+                    if (dadoNovoLocal.equals("Código livro")) {
+                        sql = "update SisBib.Livro set codLivro = ? where idAutor = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setString(1, dadoNovo.getText());
+                        preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));
+                    }
+                    else if(dadoNovoLocal.equals("Título")){
+                        sql = "update SisBib.Livro set titulo = ? where idAutor = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setString(1 , dadoNovo.getText());
+                        preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));
+                    }
+                    else if(dadoNovoLocal.equals("Id autor")){
+                        sql = "update SisBib.Livro set idAutor = ? where idAutor = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setInt(1, Integer.parseInt(dadoNovo.getText()));
+                        preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));
+                    }
+                    else if(dadoNovoLocal.equals("Id área")){
+                        sql = "update SisBib.Livro set idArea = ? where idAutor = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setInt(1, Integer.parseInt(dadoNovo.getText()));
+                        preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));
+                    }
+                }
+                else if (dadoAntigoLocal.equals("Id área")) {
+
+                    if (dadoNovoLocal.equals("Código livro")){
+                        sql = "update SisBib.Livro set codLivro = ? where idArea = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setString(1 , dadoNovo.getText());
+                        preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));
+                    }
+                    else if(dadoNovoLocal.equals("Título")){
+                        sql = "update SisBib.Livro set titulo = ? where idArea = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setString(1 , dadoNovo.getText());
+                        preparedStatement.setInt(2 , Integer.parseInt(dadoAntigo.getText()));
+                    }
+                    else if(dadoNovoLocal.equals("Id autor")){
+                        sql = "update SisBib.Livro set idAutor = ? where idArea = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setInt(1, Integer.parseInt(dadoNovo.getText()));
+                        preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));
+                    }
+                    else if(dadoNovoLocal.equals("Id área")){
+                        sql = "update SisBib.Livro set idArea = ? where idArea = ?";
+                        preparedStatement = Login.conexao.prepareStatement(sql);
+                        preparedStatement.setInt(1, Integer.parseInt(dadoNovo.getText()));
+                        preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));
+                    }
+                }
 
             case "BUSCAR":
                 String id = inpId.getText();
