@@ -254,8 +254,17 @@ public class Exemplares {
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
 
-                    preparedStatement.setInt(1, Integer.parseInt(dadoNovo.getText()));      //dado novo
-                    preparedStatement.setInt(2, Integer.parseInt(dadoRef.getText()));      //dado antigo
+                    if (colunaAlterar.getSelectedItem() == "codLivro") {
+                        preparedStatement.setString(1, dadoNovo.getText());
+                    } else {
+                        preparedStatement.setInt(1, Integer.parseInt(dadoNovo.getText()));      //dado novo
+                    }
+
+                    if (colunaRef.getSelectedItem() == "codLivro") {
+                        preparedStatement.setString(2, dadoRef.getText());
+                    } else {
+                        preparedStatement.setInt(2, Integer.parseInt(dadoRef.getText()));      //dado novo
+                    }
 
                     int linhasAfetadas = preparedStatement.executeUpdate();
                     System.out.println("Linhas afetadas: " + linhasAfetadas);
