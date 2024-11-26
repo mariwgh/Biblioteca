@@ -58,6 +58,7 @@ public class Login {
         abas.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
+                
                 int index = abas.getSelectedIndex();  // Obtém o índice da aba selecionada
                 if (index == 0){
                     mostrarTelaLogin();
@@ -90,6 +91,11 @@ public class Login {
                 }
             }
         });
+        abas.setBackground(Color.WHITE);
+        //abas.setForeground(Color.BLACK);
+        abas.setBorder(null);
+        Font fonte = new Font("Times New Roman" , Font.BOLD , 14);
+        abas.setFont(fonte);
 
         janela.add(abas, BorderLayout.NORTH);
 
@@ -173,7 +179,8 @@ public class Login {
                 setIdBibliotecaEscolhida();
             }
         });
-        selecionarBiblioteca.setEnabled(false);
+        //selecionarBiblioteca.setEnabled(false);
+        abas.setEnabled(false);
 
         // Criar um painel interno para os campos de texto e labels
         painelCamposLogin.add(LServidor, BorderLayout.CENTER);

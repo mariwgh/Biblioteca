@@ -275,6 +275,7 @@ exec SisBib.suspenderLeitor 1
 select idLeitor from SisBib.Emprestimo where devolucaoPrevista < devolucaoEfetiva and idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
 
 select * from SisBib.Exemplar WHERE idBiblioteca = 2
+select * from SisBib.Exemplar where idArea in (select idArea from SisBib.Livro)
 
 -- trigger add para: 
 --um leitor pode ter consigo, simultaneamente, até 5 livros emprestados, no máximo
