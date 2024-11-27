@@ -7,15 +7,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class Livros {
 
+public class Livros {
     public static JComboBox operacao , cbxAntigo , cbxNovo;
-    public static JButton realizar , voltar , selecionar;
-    public static int idBibliotecaEscolhida;
+    public static JButton realizar , selecionar;
     public static JPanel container , painelCampos;
     public static JTextField inpCodLivro, inpTitulo , inpAutor , inpArea , dadoAntigo , dadoNovo;
     public static JTable tabelaResultadoSql;
-    //public static JLabel mensagem;
     public static String opcao;
 
 
@@ -26,7 +24,6 @@ public class Livros {
 
         operacao = new JComboBox(opcoes);
         operacao.setPreferredSize(new Dimension(100 , 25));
-
 
         realizar = new JButton("REALIZAR");
         realizar.addActionListener(new ActionListener() {
@@ -60,23 +57,17 @@ public class Livros {
             }
         });
 
-
-        // Criar um painel interno para os campos de texto e labels
+        // cria um painel interno para os campos de texto
         panelCampos = new JPanel();
-        panelCampos.add(realizar , BorderLayout.NORTH);
-        panelCampos.add(selecionar , BorderLayout.NORTH);
-        panelCampos.add(operacao , BorderLayout.NORTH);
         panelCampos.add(Login.voltar , BorderLayout.NORTH);
-
-        // painel principal para organizar campos e botão
+        panelCampos.add(operacao , BorderLayout.NORTH);
+        panelCampos.add(selecionar , BorderLayout.NORTH);
+        panelCampos.add(realizar , BorderLayout.NORTH);
 
         container = new JPanel();
         container.setLayout(new GridLayout(5 , 4 , 5 , 5));
-        container.add(panelCampos, BorderLayout.NORTH); // Campos no centro
-        //container.setPreferredSize(new Dimension(699 , 459));
-        //container.add(Box.createVerticalStrut(15));
+        container.add(panelCampos, BorderLayout.NORTH);
     }
-
 
     public static void mostrarInputs() {
         opcao = new String();
@@ -85,32 +76,13 @@ public class Livros {
             painelCampos = new JPanel();
         }
 
-
         painelCampos.removeAll();   //limpa o container se tiver alguma coisa
         painelCampos.revalidate();  //meio que valida ele após alguma mudanã
         painelCampos.repaint();     //redesenha o container na tela após alguma alteração
-        //container.remove(tabelaResultadoSql);
-
 
         opcao = operacao.getSelectedItem().toString();
 
-
-        if (opcao.equals("BUSCAR")) {
-            inpCodLivro = new JTextField(10);
-            inpTitulo = new JTextField(10);
-            JLabel id = new JLabel("Digite o código do livro: ");
-            JLabel titulo = new JLabel("Digite o título do livro: ");
-
-            painelCampos.removeAll();
-            painelCampos.setLayout(new GridLayout(2, 2, 5, 5)); // Layout de formulário simples
-            painelCampos.add(id);
-            painelCampos.add(inpCodLivro);
-            painelCampos.add(titulo);
-            painelCampos.add(inpTitulo);
-
-            container.add(painelCampos, BorderLayout.CENTER);
-        }
-        else if (opcao.equals("INCLUIR")) {
+        if (opcao.equals("INCLUIR")) {
             inpCodLivro = new JTextField(10);
             inpTitulo = new JTextField(10);
             inpAutor = new JTextField(10);
@@ -121,7 +93,7 @@ public class Livros {
             JLabel idArea = new JLabel("Digite o id da área que o livro pertence: ");
 
             painelCampos.removeAll();
-            painelCampos.setLayout(new GridLayout(4, 2, 5, 5)); // Layout de formulário completo
+            painelCampos.setLayout(new GridLayout(4, 2, 5, 5));
             painelCampos.add(codLivro);
             painelCampos.add(inpCodLivro);
             painelCampos.add(titulo);
@@ -133,10 +105,11 @@ public class Livros {
 
             container.add(painelCampos, BorderLayout.CENTER);
         }
+
         else if (opcao.equals("DELETAR")) {
             JLabel LID = new JLabel("Digite o código do livro: ");
             JLabel LTitulo = new JLabel("Digite o título do livro: ");
-            JLabel ou = new JLabel("OU");
+            JLabel ou = new JLabel("OU/E");
             inpTitulo = new JTextField(10);
             inpCodLivro = new JTextField(10);
 
@@ -151,14 +124,17 @@ public class Livros {
 
             container.add(painelCampos, BorderLayout.CENTER);
         }
+
         else if (opcao.equals("ALTERAR")) {
-            String[] dados = new String[] { "codLivro", "titulo", "idAutor", "idArea" };
+            String[] dados = new String[] {"codLivro", "titulo", "idAutor", "idArea" };
+            String[] dadosAlterar = new String[] {"titulo", "idAutor", "idArea" };
+
             JLabel whereAntigo = new JLabel("Qual é o dado de referência?");
             cbxAntigo = new JComboBox<>(dados);
             JLabel LDadoAntigo = new JLabel("Digite o dado de referência: ");
             dadoAntigo = new JTextField(10);
             JLabel qualAlterar = new JLabel("Qual dado quer alterar?");
-            cbxNovo = new JComboBox<>(dados);
+            cbxNovo = new JComboBox<>(dadosAlterar);
             JLabel LNovo = new JLabel("Qual é o novo dado?");
             dadoNovo = new JTextField(10);
 
@@ -176,22 +152,38 @@ public class Livros {
             container.add(painelCampos, BorderLayout.CENTER);
         }
 
-        // Atualizar o layout após alterações
+        else if (opcao.equals("BUSCAR")) {
+            inpCodLivro = new JTextField(10);
+            inpTitulo = new JTextField(10);
+            JLabel id = new JLabel("Digite o código do livro: ");
+            JLabel titulo = new JLabel("Digite o título do livro: ");
+
+            painelCampos.removeAll();
+            painelCampos.setLayout(new GridLayout(3, 2, 5, 5));
+            painelCampos.add(id);
+            painelCampos.add(inpCodLivro);
+            painelCampos.add(new JLabel("OU/E"));
+            painelCampos.add(new JPanel());
+            painelCampos.add(titulo);
+            painelCampos.add(inpTitulo);
+
+            container.add(painelCampos, BorderLayout.CENTER);
+        }
+
+        // atualiza o layout dps alterações
         container.revalidate();
         container.repaint();
     }
 
-
     public static JPanel realizarTudo() throws Exception{
         montar();
         container.setPreferredSize(new Dimension(891 ,478 ));
-        //container.setLayout(new FlowLayout(FlowLayout.LEFT)); // Alinha os componentes à esquerda de maneira compacta
-        //container.setSize(300,200); // Limita o tamanho do painel
         return container;
     }
 
     public static void consultas() throws SQLException {
         Statement comandoSql;
+
         switch (opcao) {
             case "INCLUIR":
                 String sql = "INSERT INTO SisBib.Livro(codLivro , titulo , idAutor , idArea) values (? , ? , ? , ?)";
@@ -203,11 +195,9 @@ public class Livros {
                     preparedStatement.setInt(4, Integer.parseInt(inpArea.getText()));
 
                     int linhasAfetadas = preparedStatement.executeUpdate();
-                    System.out.println("Linhas afetadas: " + linhasAfetadas);
                     JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
                 } catch (SQLException ex) {
                     System.out.println(ex.getMessage());
-                    ;
                     JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
                 break;
@@ -215,12 +205,11 @@ public class Livros {
             case "DELETAR":
                 if (inpCodLivro.getText().equals("")) {
                     sql = "delete from SisBib.Livro where titulo= ?";
-
                     try {
                         PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
                         preparedStatement.setString(1, inpTitulo.getText());
+
                         int linhasAfetadas = preparedStatement.executeUpdate();
-                        //System.out.println("Linhas afetadas: " + linhasAfetadas);
                         JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
                     } catch (SQLException ex) {
                         System.out.println(ex.getMessage());
@@ -228,26 +217,23 @@ public class Livros {
                     }
                 } else if (inpTitulo.getText().equals("")) {
                     sql = "delete from SisBib.Livro where codLivro= ?";
-
                     try {
                         PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
                         preparedStatement.setString(1, inpCodLivro.getText());
+
                         int linhasAfetadas = preparedStatement.executeUpdate();
-                        //System.out.println("Linhas afetadas: " + linhasAfetadas);
                         JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
                     } catch (SQLException ex) {
                         System.out.println(ex.getMessage());
                         JOptionPane.showMessageDialog(null, ex.getMessage());
                     }
-
                 } else {
                     System.out.println("Dados inválidos");
                 }
                 break;
 
             case "ALTERAR":
-                sql = "update SisBib.Exemplar set " + cbxNovo.getSelectedItem().toString() + " = ? where " + cbxAntigo.getSelectedItem().toString() + " = ? and idBiblioteca = " + idBibliotecaEscolhida;
-                System.out.println(sql);
+                sql = "update SisBib.Livro set " + cbxNovo.getSelectedItem().toString() + " = ? where " + cbxAntigo.getSelectedItem().toString() + " = ? ";
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
 
@@ -265,10 +251,7 @@ public class Livros {
                         preparedStatement.setInt(2, Integer.parseInt(dadoAntigo.getText()));      //dado novo
                     }
 
-                    System.out.println(sql);
-
                     int linhasAfetadas = preparedStatement.executeUpdate();
-                    System.out.println("Linhas afetadas: " + linhasAfetadas);
                     JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
                 } catch (SQLException ex) {
                     System.out.println(ex.getMessage());
@@ -279,24 +262,19 @@ public class Livros {
             case "BUSCAR":
                 String codLivro = inpCodLivro.getText();
                 String titulo = inpTitulo.getText();
-                System.out.println(idBibliotecaEscolhida + " é o id da biblioteca");
 
                 String stringSql = "select * from SisBib.Livro where idArea in (select idArea from SisBib.Livro) ";
 
                 //se nenhum campo for fornecido, a stringSql continuara a mesma e n entrara nos id
                 //se forneceu todos os campos, entrará em todos os if
 
-                //se ele forneceu idExemplar
                 if (!codLivro.equals("")) {
                     stringSql += " and codLivro = '" + codLivro + "'";
                 }
 
-                //se ele forneceu codExemplar
                 if (!titulo.equals("")) {
                     stringSql += " and titulo = '" + titulo + "'";
                 }
-
-                System.out.println(stringSql);
 
                 try {
                     int linhas = 0;
@@ -334,12 +312,11 @@ public class Livros {
                         if (resultadoDoSelect != null) {
                             DefaultTableModel modelo = new DefaultTableModel(resultadoSQL, colunas);
                             tabelaResultadoSql = new JTable(modelo);
-                            //tabelaResultadoSql.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
                             container.add(tabelaResultadoSql);
                             container.setVisible(true);
                         } else {
                             System.out.println("está dando nulo");
-                            JOptionPane.showMessageDialog(null, "o resultado do selct deu nulo");
+                            JOptionPane.showMessageDialog(null, "o resultado do select deu nulo");
                         }
 
                     } else {
@@ -351,5 +328,4 @@ public class Livros {
                 }
         }
     }
-
 }

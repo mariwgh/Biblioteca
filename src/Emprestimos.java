@@ -15,34 +15,22 @@ import java.util.Properties;
 
 import static src.Login.formatarData;
 
-/*
-4.	Empréstimos de exemplares de livros da biblioteca informada no Login –
-relacionar leitor com exemplar de livro,
-informando as datas de realização do empréstimo (pegar no checkin do login) e a data prevista para devolução.
-
-Mostrar os livros em atraso numa guia de um TabControl usando a view do item 6.
-
-Usar a trigger do item 7 para capturar exceções e impedir o empréstimo de ser feito, avisando o usuário.
-No momento do empréstimo, o campo devolucaoEfetiva ficará nulo, pois o livro ainda não foi devolvido.
-*/
 
 public class Emprestimos {
     public static JButton realizar;
     public static JPanel container, painelCampos;
-    public static JTextField inputIdLeitor, inputNumExemplar, inputDevolucaoPrevista;
+    public static JTextField inputIdLeitor, inputNumExemplar;
     public static int idExemplar;
     public static String dataPrevista;
     public static JTable tabelaResultadoSqlAtrasos;
 
-    // Inicializar o valor de idBibliotecaEscolhida
     public static int idBibliotecaEscolhida;
     static {
-        // Chamando o método no bloco estático da classe login
         Login.setIdBibliotecaEscolhida();
-        idBibliotecaEscolhida = Login.idBibliotecaEscolhida; //pega o valor definido dps de definir em login
+        idBibliotecaEscolhida = Login.idBibliotecaEscolhida;
     }
 
-    // Inicializar o valor de dataCheckIn
+    // inicializa o valor de dataCheckIn
     public static String dataCheckIn;
     static {
         dataCheckIn = Login.dataFormatada;
@@ -53,7 +41,7 @@ public class Emprestimos {
         if (painelCampos == null) {
             painelCampos = new JPanel();
         }
-        painelCampos.setLayout(new GridLayout(2, 2, 5, 5)); // Layout de formulário completo
+        painelCampos.setLayout(new GridLayout(2, 2, 5, 5));
 
         painelCampos.removeAll();   //limpa o container se tiver alguma coisa
         painelCampos.revalidate();  //meio que valida ele após alguma mudança
@@ -76,16 +64,15 @@ public class Emprestimos {
         container.add(painelCampos, BorderLayout.CENTER);
 
         //calendario EM BAIXO do campos
-        JPanel painelCalendario = new JPanel();                                      // Criação de um painel para juncao o calendário e o texto
-        painelCalendario.setLayout(new BoxLayout(painelCalendario, BoxLayout.Y_AXIS)); // Layout para empilhar os componentes verticalmente
+        JPanel painelCalendario = new JPanel();                                             // criação de um painel para juncao o calendário e o texto
+        painelCalendario.setLayout(new BoxLayout(painelCalendario, BoxLayout.Y_AXIS));      // layout para empilhar os componentes verticalmente
         painelCalendario.add(new JLabel("Devolução prevista: "), BorderLayout.CENTER);
-        //espaco
-        UtilDateModel model = new UtilDateModel();                               //cria um modelo de dados para o componente de seleção de data
-        Properties p = new Properties();                                        //cria um objeto de propriedades que será usado para personalizar o painel de seleção de datas
+        UtilDateModel model = new UtilDateModel();                                          //cria um modelo de dados para o componente de seleção de data
+        Properties p = new Properties();                                                    //cria um objeto de propriedades que será usado para personalizar o painel de seleção de datas
         p.put("text.today", "Today");
         p.put("text.month", "Month");
-        p.put("text.year", "Year");                                             //define os textos personalizados para o painel de seleção de datas
-        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);                //cria o painel de calendário com base no UtilDateModel (modelo de dados) e nas propriedades configuradas
+        p.put("text.year", "Year");                                                         //define os textos personalizados para o painel de seleção de datas
+        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);                            //cria o painel de calendário com base no UtilDateModel (modelo de dados) e nas propriedades configuradas
         JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());  //cria o componente DatePicker propriamente dito (escolhe data)
         model.addChangeListener(e -> {
             dataPrevista = formatarData((Date) datePicker.getModel().getValue());
@@ -97,7 +84,7 @@ public class Emprestimos {
 
         container.add(painelCalendario, BorderLayout.CENTER);
 
-        // Atualizar o layout após alterações
+        // atualiza o layout após alterações
         container.revalidate();
         container.repaint();
 
@@ -106,8 +93,7 @@ public class Emprestimos {
         realizar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //realizar a função escolhida no cbx, pegar os dados
-                //dos campos do formulario e fazer a consulta
+                //realizar a função escolhida no cbx, pegar os dados dos campos do formulario e fazer a consulta
                 try {
                     inserirEmprestimo();
                 } catch (SQLException ex) {
@@ -116,7 +102,6 @@ public class Emprestimos {
             }
         });
 
-        // Criar um painel interno para os campos de texto e labels
         JPanel painelBotoes = new JPanel();
         painelBotoes.add(Login.voltar , BorderLayout.NORTH);
         painelBotoes.add(realizar , BorderLayout.SOUTH);
@@ -127,16 +112,13 @@ public class Emprestimos {
         buscarAtrasosView();
     }
 
-
     public static JPanel realizarTudo() throws Exception {
         montar();
         container.setPreferredSize(new Dimension(891 ,478 ));
         return container;
     }
 
-
     public static void inserirEmprestimo() throws SQLException {
-        //select idExemplar from SisBib.Exemplar where numeroExemplar = 6 and idBiblioteca = 2
         String buscaExemplar = "select idExemplar from SisBib.Exemplar where numeroExemplar = ? and idBiblioteca = ?";
         try {
             PreparedStatement preparedStatement = Login.conexao.prepareStatement(buscaExemplar);
@@ -144,6 +126,7 @@ public class Emprestimos {
             preparedStatement.setInt(2, idBibliotecaEscolhida);
 
             ResultSet resultIdExemplar = preparedStatement.executeQuery();
+
             //se houver resultados
             if (resultIdExemplar.next()) {
                 idExemplar = resultIdExemplar.getInt("idExemplar");
@@ -164,7 +147,6 @@ public class Emprestimos {
             preparedStatement.setString(3, String.valueOf(dataCheckIn));
             preparedStatement.setString(4, String.valueOf(dataPrevista));
 
-            System.out.println(sql);
             int linhasAfetadas = preparedStatement.executeUpdate();
             JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
         } catch (SQLException ex) {
@@ -174,9 +156,7 @@ public class Emprestimos {
     }
 
     public static void buscarAtrasosView() throws SQLException {
-        //select * from SisBib.atrasos
         String stringSql = "select a.* from SisBib.atrasos as a inner join SisBib.Exemplar as ex on ex.idExemplar = a.idExemplar inner join SisBib.Biblioteca as b on b.idBiblioteca = ex.idBiblioteca where b.idBiblioteca = " + idBibliotecaEscolhida;
-        System.out.println(stringSql);
 
         Statement comandoSql;
 

@@ -102,7 +102,7 @@ select * from SisBib.Autor
 insert into SisBib.Autor
 (nome)
 values
-('J.K. Rowling'),
+('Casey McQuiston'),
 ('Michael Crichton')
 
 
@@ -116,7 +116,7 @@ values
 ('Biblioteca Central')
 
 
-select * from SisBib.Emprestimo
+select* from SisBib.Emprestimo
 --ser preenchida no programa
 --idEmprestimo é identity
 
@@ -133,7 +133,14 @@ update SisBib.Emprestimo set devolucaoEfetiva = '30-11-2024' where idLeitor = 2 
 update SisBib.Emprestimo set devolucaoEfetiva = NULL where idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
 --leitor que atrasou, comando devolucao para chamar sp
 select idLeitor from SisBib.Emprestimo where devolucaoPrevista < devolucaoEfetiva and idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
-
+select a.* from SisBib.atrasos as a inner join SisBib.Exemplar as ex on ex.idExemplar = a.idExemplar inner join SisBib.Biblioteca as b on b.idBiblioteca = ex.idBiblioteca where b.idBiblioteca = 2
+select numeroExemplar from SisBib.Exemplar where idExemplar = 27 and idBiblioteca = 2
+--testes:
+select idLeitor from SisBib.Emprestimo where devolucaoPrevista < devolucaoEfetiva and idLeitor = 1 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'ebjshw' and numeroExemplar = 8 and idBiblioteca = 2)
+select idLeitor from SisBib.Emprestimo where devolucaoPrevista < devolucaoEfetiva and idLeitor = 1 and idExemplar = 20
+select em.*, ex.numeroExemplar from SisBib.Emprestimo as em inner join SisBib.Exemplar as ex on ex.idExemplar = em.idExemplar
+select devolucaoPrevista, devolucaoEfetiva from SisBib.Emprestimo where devolucaoPrevista = devolucaoEfetiva and idLeitor = 1 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'EBJSHW' and numeroExemplar = 1 and idBiblioteca = 2)
+update SisBib.Emprestimo set devolucaoEfetiva = ? where idLeitor = ? and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = ? and numeroExemplar = ? and idBiblioteca = ?) and devolucaoEfetiva is null
 
 
 select * from SisBib.Exemplar
@@ -274,9 +281,116 @@ exec SisBib.suspenderLeitor 1
 
 select idLeitor from SisBib.Emprestimo where devolucaoPrevista < devolucaoEfetiva and idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
 
-select * from SisBib.Exemplar WHERE idBiblioteca = 2
+select * from SisBib.Livro
+select * from SisBib.Emprestimo
+update SisBib.Livro set codLivro = 'JURPRK' where codLivro = 'JURPK1'
 select * from SisBib.Exemplar where idArea in (select idArea from SisBib.Livro)
 
--- trigger add para: 
+
+
+-- trigger ADICIONAIS para: 
+
 --um leitor pode ter consigo, simultaneamente, até 5 livros emprestados, no máximo
---o atraso na devolução de um livro torna o leitor suspenso.
+--NAO RODEI
+
+create trigger SisBib.limitarLivrosLeitor on SisBib.Emprestimo
+instead of insert
+as
+begin
+	declare @idLeitor int
+    select @idLeitor = idLeitor from inserted
+
+    if (select count(*) from SisBib.Emprestimo where idLeitor = @idLeitor and devolucaoEfetiva is null) >= 5
+		begin
+			throw 50002, 'O leitor já atingiu o limite de 5 livros emprestados simultaneamente.', 1
+		end
+    else
+		begin
+			insert into SisBib.Emprestimo 
+			(idLeitor, idExemplar, dataEmprestimo, devolucaoEfetiva, devolucaoPrevista)
+			values
+			(select idLeitor from inserted, select idExemplar from inserted, select dataEmprestimo from inserted, select devolucaoEfetiva from inserted, select devolucaoPrevista from inserted)
+		end
+end
+
+
+--numExemplar n pode se repetir em livro da biblioteca:
+--(Um livro pode ter vários exemplares, numerados de 1 a n, que representam, cada um, um livro físico do acervo. 
+--ada exemplar pertence fisicamente a uma das bibliotecas da cidade, de maneira que, 
+--mesmo que o código do livro e do exemplar possam se repetir pelas diversas bibliotecas, 
+--é necessário saber em qual biblioteca o exemplar físico está localizado.)
+
+create trigger SisBib.repeticaoNumeroExemplar on SisBib.Exemplar
+instead of insert
+as
+begin
+    declare @idBiblioteca int
+	declare @codLivro varchar(6)
+	declare @numeroExemplar int
+
+    select @idBiblioteca = idBiblioteca from inserted
+	select @codLivro = codLivro from inserted
+	select @numeroExemplar = numeroExemplar from inserted
+
+    if exists (select idExemplar from SisBib.Exemplar where idBiblioteca = @idBiblioteca and codLivro = @codLivro and numeroExemplar = @numeroExemplar)
+		begin
+			throw 50003, 'Já existe um exemplar com este número para este livro na mesma biblioteca.', 1
+		end
+    else
+		begin
+			insert into SisBib.Exemplar 
+			(idBiblioteca, codLivro, numeroExemplar)
+			values
+			(@idBiblioteca, @codLivro, @numeroExemplar)
+		end
+end
+
+SELECT * FROM SisBib.Exemplar
+insert into SisBib.Exemplar 
+(idBiblioteca, codLivro, numeroExemplar)
+values (2, 'EBJSHW', 3)
+
+
+--se for mudar o codLivro, mudar em exemplar tb 
+--NAO ADIANTA
+
+create trigger SisBib.atualizarCodLivro on SisBib.Livro
+for update
+as
+begin
+    if exists (select codLivro from deleted) and exists (select codLivro from inserted)
+		begin
+			declare @codVelho varchar(6)
+			declare @codNovo varchar(6)
+
+			select @codVelho = codLivro from deleted
+			select @codNovo = codLivro from inserted
+		
+			update SisBib.Exemplar set codLivro = @codNovo where codLivro = @codVelho
+		end
+end
+
+DROP TRIGGER SisBib.atualizarCodLivro
+
+SELECT * FROM SisBib.Livro
+update SisBib.Livro set codLivro = 'JURPRK' where codLivro = 'JURPK1'
+
+
+--se esta suspenso nao pode emprestar
+--NAO RODEI 
+
+create trigger SisBib.impedeEmprestimoSuspenso on SisBib.Emprestimo
+instead of insert
+as
+begin
+    if exists (select 1 from SisBib.Leitor where idLeitor = (select idLeitor from inserted) and estaSuspenso = 's')
+		begin
+			throw 50000, 'não é possível realizar o empréstimo. o leitor está suspenso.', 1
+		end
+    else
+		begin
+			insert into SisBib.Emprestimo 
+			(idLeitor, idExemplar, dataEmprestimo, devolucaoEfetiva, devolucaoPrevista)
+			select idLeitor, idExemplar, dataEmprestimo, devolucaoEfetiva, devolucaoPrevista from inserted
+		end
+end

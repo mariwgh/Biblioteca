@@ -13,15 +13,12 @@ public class Devolucoes {
     public static JPanel container, painelCampos;
     public static JTextField inputIdLeitor, inputCodLivro, inputNumExemplar;
 
-    // Inicializar o valor de idBibliotecaEscolhida
     public static int idBibliotecaEscolhida;
     static {
-        // Chamando o método no bloco estático da classe login
         Login.setIdBibliotecaEscolhida();
-        idBibliotecaEscolhida = Login.idBibliotecaEscolhida; //pega o valor definido dps de definir em login
+        idBibliotecaEscolhida = Login.idBibliotecaEscolhida;
     }
 
-    // Inicializar o valor de dataCheckIn
     public static String dataDevolucao;
     static {
         dataDevolucao = Login.dataFormatada;
@@ -58,7 +55,7 @@ public class Devolucoes {
 
         container.add(painelCampos, BorderLayout.CENTER);
 
-        // Atualizar o layout após alterações
+        // atualiza o layout após alterações
         container.revalidate();
         container.repaint();
 
@@ -67,8 +64,7 @@ public class Devolucoes {
         realizar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //realizar a função escolhida no cbx, pegar os dados
-                //dos campos do formulario e fazer a consulta
+                //realizar a função escolhida no cbx, pegar os dados dos campos do formulario e fazer a consulta
                 try {
                     updateEmprestimo();
                     verificarAtrasoESuspender();
@@ -78,7 +74,7 @@ public class Devolucoes {
             }
         });
 
-        // Criar um painel interno para os campos de texto e labels
+        // cria um painel interno para os campos de texto e labels
         JPanel painelBotoes = new JPanel();
         painelBotoes.add(Login.voltar , BorderLayout.NORTH);
         painelBotoes.add(realizar , BorderLayout.SOUTH);
@@ -87,16 +83,14 @@ public class Devolucoes {
         container.add(Box.createVerticalStrut(15));     //espaçamento vertical fixo de 15 pixels no layout
     }
 
-
     public static JPanel realizarTudo() throws Exception {
         montar();
         container.setPreferredSize(new Dimension(891 ,478 ));
         return container;
     }
 
-
     public static void updateEmprestimo() throws SQLException {
-        String sql = "update SisBib.Emprestimo set devolucaoEfetiva = ? where idLeitor = ? and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = ? and numeroExemplar = ? and idBiblioteca = ?)";
+        String sql = "update SisBib.Emprestimo set devolucaoEfetiva = ? where idLeitor = ? and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = ? and numeroExemplar = ? and idBiblioteca = ?) and devolucaoEfetiva is null";
         try {
             PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
             preparedStatement.setString(1, dataDevolucao);
@@ -105,9 +99,7 @@ public class Devolucoes {
             preparedStatement.setInt(4, Integer.parseInt(inputNumExemplar.getText()));
             preparedStatement.setInt(5, idBibliotecaEscolhida);
 
-            System.out.println(sql);
             int linhasAfetadas = preparedStatement.executeUpdate();
-            System.out.println("Linhas afetadas: " + linhasAfetadas);
             JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
@@ -116,10 +108,7 @@ public class Devolucoes {
     }
 
     public static void verificarAtrasoESuspender() {
-        //exec SisBib.suspenderLeitor idLeitor
-
         String stringSql = "select idLeitor from SisBib.Emprestimo where devolucaoPrevista < devolucaoEfetiva and idLeitor = " + Integer.parseInt(inputIdLeitor.getText()) + " and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = '" + inputCodLivro.getText() + "' and numeroExemplar = " + Integer.parseInt(inputNumExemplar.getText()) + " and idBiblioteca = " + idBibliotecaEscolhida + ")";
-        System.out.println(stringSql);
 
         Statement comandoSql;
 
@@ -128,15 +117,13 @@ public class Devolucoes {
             ResultSet resultadoDoSelect = comandoSql.executeQuery(stringSql);
 
             //se houver resultados/exemplares
-            if (resultadoDoSelect != null) {
+            if (resultadoDoSelect.next()) {
                 String sql = "exec SisBib.suspenderLeitor ?";
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
                     preparedStatement.setInt(1, Integer.parseInt(inputIdLeitor.getText()));
 
-                    System.out.println(sql);
                     int linhasAfetadas = preparedStatement.executeUpdate();
-                    System.out.println("Linhas afetadas: " + linhasAfetadas);
                     JOptionPane.showMessageDialog(null, "Leitor suspenso!\nLinhas afetadas: " + linhasAfetadas);
                 } catch (SQLException ex) {
                     System.out.println(ex.getMessage());
@@ -151,6 +138,5 @@ public class Devolucoes {
             System.out.println(ex.getMessage());
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
-
     }
 }

@@ -10,13 +10,6 @@ import java.awt.image.BaseMultiResolutionImage;
 import java.sql.*;
 import java.util.Properties;
 
-/*
-import java.sql.Statement;		        // permite criar um objeto de execução de comandos no servidor
-import java.sql.PreparedStatement;  	// para usar parÂmetros em comandos SQL e evitar SQL Injection
-import java.sql.CallableStatement;  	// para chamar stored procedures
-import java.sql.Date;
-*/
-
 import org.jdatepicker.impl.*;
 import java.text.SimpleDateFormat;
 
@@ -34,8 +27,8 @@ public class Login {
     public static int idBibliotecaEscolhida;
     public static java.util.Date dataSelecionada;
     public static String dataFormatada;
-
     public static ResultSet resultadoSelect;
+
 
     public static void main(String[] args) throws Exception {
         montar();
@@ -59,7 +52,7 @@ public class Login {
             @Override
             public void stateChanged(ChangeEvent e) {
                 
-                int index = abas.getSelectedIndex();  // Obtém o índice da aba selecionada
+                int index = abas.getSelectedIndex();
                 if (index == 0){
                     mostrarTelaLogin();
                 }
@@ -100,7 +93,7 @@ public class Login {
         janela.add(abas, BorderLayout.NORTH);
 
         container_area = new JPanel();
-        janela.add(container_area, BorderLayout.CENTER);     // Painel principal no centro
+        janela.add(container_area, BorderLayout.CENTER);
 
         mostrarTelaLogin();
 
@@ -113,10 +106,9 @@ public class Login {
             }
         });
 
-        // Configurações finais
+        // configurações finais
         janela.pack();
         janela.setVisible(true);
-        //janela.setPreferredSize(new Dimension(699 , 469));
     }
 
     public static void mostrarTelaLogin() {
@@ -146,7 +138,7 @@ public class Login {
                 try {
                     getConnection();
                     if(conexao != null){
-                        System.out.println("Deu certo!");
+                        System.out.println("Deu certo a conexão!");
                         verificar();
                     }
                 } catch (Exception ex) {
@@ -156,19 +148,17 @@ public class Login {
         });
 
         verSenha = new JButton("Mostrar Senha");
-        //verSenha.setPreferredSize(new Dimension(4 , 5));
         verSenha.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (senha.getEchoChar() == '•'){
-                    senha.setEchoChar((char)0); //nao entendi mas é
+                    senha.setEchoChar((char)0);
                     verSenha.setText("Mostrar Senha");
                 }
                 else{
                     senha.setEchoChar('•');
                     verSenha.setText("Ocultar Senha");
                 }
-
             }
         });
 
@@ -179,10 +169,10 @@ public class Login {
                 setIdBibliotecaEscolhida();
             }
         });
-        //selecionarBiblioteca.setEnabled(false);
+
         abas.setEnabled(false);
 
-        // Criar um painel interno para os campos de texto e labels
+        // cria um painel interno para os campos de texto
         painelCamposLogin.add(LServidor, BorderLayout.CENTER);
         painelCamposLogin.add(servidor, BorderLayout.CENTER);
         painelCamposLogin.add(LBD, BorderLayout.CENTER);
@@ -196,33 +186,33 @@ public class Login {
         painelCamposLogin.add(cbx , BorderLayout.CENTER);
         painelCamposLogin.add(selecionarBiblioteca , BorderLayout.CENTER);
 
-        // Painel principal para organizar o login e o calendário
+        // painel principal para organizar o login e o calendário
         JPanel painelLogin = new JPanel(new BorderLayout());
         painelLogin.add(painelCamposLogin, BorderLayout.CENTER);
 
-        //calendario ao lado direto? do login
-        JPanel panelCalendario = new JPanel();                                      // Criação de um painel para juncao o calendário e o texto
-        panelCalendario.setLayout(new BoxLayout(panelCalendario, BoxLayout.Y_AXIS)); // Layout para empilhar os componentes verticalmente
+        //calendario ao lado do login
+        JPanel panelCalendario = new JPanel();                                          // criação de um painel para juncao o calendário e o texto
+        panelCalendario.setLayout(new BoxLayout(panelCalendario, BoxLayout.Y_AXIS));    // layout para empilhar os componentes verticalmente
         panelCalendario.add(new JLabel("Check-In Date: "), BorderLayout.EAST);
-        UtilDateModel model = new UtilDateModel();                               //cria um modelo de dados para o componente de seleção de data
-        Properties p = new Properties();                                        //cria um objeto de propriedades que será usado para personalizar o painel de seleção de datas
+        UtilDateModel model = new UtilDateModel();                                      //cria um modelo de dados para o componente de seleção de data
+        Properties p = new Properties();                                                //cria um objeto de propriedades que será usado para personalizar o painel de seleção de datas
         p.put("text.today", "Today");
         p.put("text.month", "Month");
-        p.put("text.year", "Year");                                             //define os textos personalizados para o painel de seleção de datas
-        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);                //cria o painel de calendário com base no UtilDateModel (modelo de dados) e nas propriedades configuradas
+        p.put("text.year", "Year");                                                     //define os textos personalizados para o painel de seleção de datas
+        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);                        //cria o painel de calendário com base no UtilDateModel (modelo de dados) e nas propriedades configuradas
         JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());  //cria o componente DatePicker propriamente dito (escolhe data)
         model.addChangeListener(e -> {
             dataSelecionada = (java.util.Date) datePicker.getModel().getValue();
             dataFormatada = formatarData(dataSelecionada);
         });
-        datePicker.setBounds(110, 100, 200, 25);            //define a posição
-        model.setSelected(true);                                                //ativa o modelo, indicando que uma data foi selecionada
-        datePicker.setVisible(true);                                            //deixa visivel
+        datePicker.setBounds(110, 100, 200, 25);                    //define a posição
+        model.setSelected(true);                                                        //ativa o modelo, indicando que uma data foi selecionada
+        datePicker.setVisible(true);                                                    //deixa visivel
 
         panelCalendario.add(datePicker);
-        painelLogin.add(panelCalendario, BorderLayout.EAST); // Adiciona o calendário no lado direito
+        painelLogin.add(panelCalendario, BorderLayout.EAST);
 
-        // Adiciona o painel de login ao container principal
+        // add o painel de login ao container principal
         container_area.removeAll();
         container_area.setLayout(new BorderLayout());
         container_area.add(painelLogin, BorderLayout.CENTER);
@@ -257,14 +247,12 @@ public class Login {
                 quantasBibliotecas +=1;
             }
 
-            //System.out.println(quantasBibliotecas + " é o número de bibliotecas cadastradas");
-
             opcoes = new String[quantasBibliotecas];    // criar um vetor com tamanho de quantas bibliotecas para exibir no cbx
 
             resultadoSelect.beforeFirst();
 
             int i = 0;
-            while (resultadoSelect.next()){ // coloca os elementos do select em um vetor
+            while (resultadoSelect.next()){     // coloca os elementos do select em um vetor
                 opcoes[i] = resultadoSelect.getString("nome");
                 i++;
             }
@@ -287,72 +275,58 @@ public class Login {
         }
     }
 
-    //talvez colocar isso em uma outra classe seja melhor!
-    /*public static ResultSet realizarSQL() throws SQLException {
-        Statement comandoSQL = conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        resultadoSelect = comandoSQL.executeQuery("select nome from SisBib.Biblioteca");    //aqui vai receber como parâmetro a consulta desejada
-        //cuidar depois do SQLInjection
-        return resultadoSelect;
-    }*/
-
     public static void verificar() throws SQLException{
         if (conexao != null){
             JOptionPane.showMessageDialog(null , "Login feito com sucesso!");
             depoisLogin();
-
         }
         else{
-            System.out.println("Não entra no if para montar com o combo box");
+            System.out.println("Login sem sucesso.");
         }
     }
 
-    public static Component mostrarLivros() throws Exception{    //  só retorna Component porque o JTabbed precisa que esse método retorne um componente
+
+    public static Component mostrarLivros() throws Exception{    //só retorna Component porque o JTabbed precisa que esse método retorne um componente
         Livros objetoLivro = new Livros();
         container_area.removeAll();
-        //janela.removeAll();
         JPanel painelLivros = objetoLivro.realizarTudo();
         container_area.add(painelLivros , BorderLayout.CENTER);
         janela.add(container_area);
         janela.pack();
-        //container_area.add(cbx , BorderLayout.SOUTH);
 
         return null;
     }
 
-    public static Component mostrarExemplares() throws Exception{    //  só retorna Component porque o JTabbed precasa que esse método retorne um componente
+    public static Component mostrarExemplares() throws Exception{
         Exemplares objetoExemplar = new Exemplares();
         container_area.removeAll();
-        //janela.removeAll();
         JPanel painelExemplar = objetoExemplar.realizarTudo();
         container_area.add(painelExemplar , BorderLayout.CENTER);
-
-        janela.pack();
         janela.add(container_area);
         janela.pack();
+
         return null;
     }
 
-    public static Component mostrarEmprestimos() throws Exception{    //  só retorna Component porque o JTabbed precasa que esse método retorne um componente
+    public static Component mostrarEmprestimos() throws Exception{
         Emprestimos objetoEmprestimo = new Emprestimos();
         container_area.removeAll();
-        //janela.removeAll();
         JPanel painelEmprestimo = objetoEmprestimo.realizarTudo();
         container_area.add(painelEmprestimo , BorderLayout.CENTER);
-        janela.pack();
         janela.add(container_area);
         janela.pack();
+
         return null;
     }
 
-    public static Component mostrarDevolucoes() throws Exception{    //  só retorna Component porque o JTabbed precasa que esse método retorne um componente
+    public static Component mostrarDevolucoes() throws Exception{
         Devolucoes objetoDevolucoes = new Devolucoes();
         container_area.removeAll();
-        //janela.removeAll();
         JPanel painelDevolucoes = objetoDevolucoes.realizarTudo();
         container_area.add(painelDevolucoes , BorderLayout.CENTER);
-        janela.pack();
         janela.add(container_area);
         janela.pack();
+
         return null;
     }
 
@@ -365,7 +339,7 @@ public class Login {
 
             if (resultadoSelect.next()) {
                 idBibliotecaEscolhida = resultadoSelect.getInt("idBiblioteca");
-                System.out.println(idBibliotecaEscolhida);
+
                 return idBibliotecaEscolhida;
             } else {
                 throw new SQLException("Biblioteca não encontrada!");

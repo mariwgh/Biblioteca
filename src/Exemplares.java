@@ -20,11 +20,11 @@ public class Exemplares {
     public static JComboBox<String> colunaRef, colunaAlterar;
     public static JTextField dadoRef, dadoNovo;
 
-    // Inicializar o valor de idBibliotecaEscolhida
+    // inicializa o valor de idBibliotecaEscolhida
     public static int idBibliotecaEscolhida;
     static {
-        // Chamando o método no bloco estático da classe login
-        idBibliotecaEscolhida = Login.setIdBibliotecaEscolhida();; //pega o valor definido dps de definir em login
+        // chama o método no bloco estático da classe login
+        idBibliotecaEscolhida = Login.setIdBibliotecaEscolhida(); //pega o valor definido dps de definir em login
     }
 
 
@@ -41,6 +41,12 @@ public class Exemplares {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
+                    if (tabelaResultadoSql != null){
+                        tabelaResultadoSql.removeAll();
+                        container.remove(tabelaResultadoSql);
+                        container.repaint();
+                        container.revalidate();
+                    }
                     mostrarEscolhaSelecionada();
                 }
                 catch (Exception erro){
@@ -62,39 +68,17 @@ public class Exemplares {
             }
         });
 
-        selecionar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try{
-                    if (tabelaResultadoSql != null){
-                        tabelaResultadoSql.removeAll();
-                        container.remove(tabelaResultadoSql);
-                        container.repaint();
-                        container.revalidate();
-                    }
-                    consultas();
-                }
-                catch (Exception erro){
-                    System.out.println(erro.getMessage());
-                }
-
-            }
-        });
-
-        // Criar um painel interno para os campos de texto e labels
         painelBotoes = new JPanel();
         painelBotoes.add(Login.voltar , BorderLayout.NORTH);
         painelBotoes.add(operacao , BorderLayout.NORTH);
         painelBotoes.add(selecionar , BorderLayout.NORTH);
         painelBotoes.add(realizar , BorderLayout.NORTH);
 
-        // painel principal para organizar campos e botão
         container = new JPanel();
         container.setLayout(new GridLayout(7 , 4 , 5 , 5));
         container.add(painelBotoes, BorderLayout.NORTH);        // botoes em cima
         container.add(Box.createVerticalStrut(15));     //espaçamento vertical fixo de 15 pixels no layout
     }
-
 
     public static void mostrarEscolhaSelecionada() {
         opcao = new String();
@@ -143,6 +127,7 @@ public class Exemplares {
 
             case "ALTERAR":
                 String[] dados = new String[]{"idExemplar", "idBiblioteca", "codLivro", "numeroExemplar"};
+                String[] dadosAlterar = new String[]{"idBiblioteca", "codLivro", "numeroExemplar"};
 
                 JLabel whereColuna = new JLabel("Qual é o dado de referência?");
                 colunaRef = new JComboBox<>(dados);
@@ -151,7 +136,7 @@ public class Exemplares {
                 dadoRef = new JTextField(10);
 
                 JLabel setColuna = new JLabel("Qual dado quer alterar?");
-                colunaAlterar = new JComboBox<>(dados);
+                colunaAlterar = new JComboBox<>(dadosAlterar);
 
                 JLabel setDado = new JLabel("Digite o novo dado: ");
                 dadoNovo = new JTextField(10);
@@ -185,11 +170,11 @@ public class Exemplares {
 
                 painelCampos.add(idExemplar);
                 painelCampos.add(inputIdExemplar);
-                painelCampos.add(new JLabel("ou"));
+                painelCampos.add(new JLabel("OU/E"));
                 painelCampos.add(new JLabel(""));
                 painelCampos.add(codLivro);
                 painelCampos.add(inputCodLivro);
-                painelCampos.add(new JLabel("ou"));
+                painelCampos.add(new JLabel("OU/E"));
                 painelCampos.add(new JLabel(""));
                 painelCampos.add(numExemplar);
                 painelCampos.add(inputNumExemplar);
@@ -198,11 +183,10 @@ public class Exemplares {
                 break;
         }
 
-        // Atualizar o layout após alterações
+        // atualiza o layout após alterações
         container.revalidate();
         container.repaint();
     }
-
 
     public static JPanel realizarTudo() throws Exception {
         montarBotoesPrincipais();
@@ -210,22 +194,19 @@ public class Exemplares {
         return container;
     }
 
-
     public static void consultas() throws SQLException {
         Statement comandoSql;
+
         switch (opcao) {
             case "INCLUIR":
-                //PASSAR COMO PARAMETRO O INSERT INTO COM OS DADOS
                 String sql = "INSERT INTO SisBib.Exemplar(idBiblioteca, codLivro, numeroExemplar) values (? , ? , ?)";
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
-                    preparedStatement.setInt(1, idBibliotecaEscolhida);     //primeiro '?'
-                    preparedStatement.setString(2, inputCodLivro.getText());                   //segundo '?'
-                    preparedStatement.setInt(3, Integer.parseInt(inputNumExemplar.getText()));                //terceiro '?'
+                    preparedStatement.setInt(1, idBibliotecaEscolhida);                             //primeiro '?'
+                    preparedStatement.setString(2, inputCodLivro.getText());                        //segundo '?'
+                    preparedStatement.setInt(3, Integer.parseInt(inputNumExemplar.getText()));      //terceiro '?'
 
-                    System.out.println(sql);
                     int linhasAfetadas = preparedStatement.executeUpdate();
-                    System.out.println("Linhas afetadas: " + linhasAfetadas);
                     JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
                 } catch (SQLException ex) {
                     System.out.println(ex.getMessage());
@@ -239,9 +220,7 @@ public class Exemplares {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
                     preparedStatement.setInt(1, Integer.parseInt(inputIdExemplar.getText()));
 
-                    System.out.println(sql);
                     int linhasAfetadas = preparedStatement.executeUpdate();
-                    System.out.println("Linhas afetadas: " + linhasAfetadas);
                     JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
                 } catch (SQLException ex) {
                     System.out.println(ex.getMessage());
@@ -267,7 +246,6 @@ public class Exemplares {
                     }
 
                     int linhasAfetadas = preparedStatement.executeUpdate();
-                    System.out.println("Linhas afetadas: " + linhasAfetadas);
                     JOptionPane.showMessageDialog(null, "Linhas afetadas: " + linhasAfetadas);
                 } catch (SQLException ex) {
                     System.out.println(ex.getMessage());
@@ -279,7 +257,6 @@ public class Exemplares {
                 String idExemplar = inputIdExemplar.getText();
                 String codLivro = inputCodLivro.getText();
                 String numExemplar = inputNumExemplar.getText();
-                System.out.println(idBibliotecaEscolhida + " é o id da biblioteca");
 
                 String stringSql = "select * from SisBib.Exemplar where idBiblioteca = " + idBibliotecaEscolhida;
 
@@ -301,13 +278,10 @@ public class Exemplares {
                     stringSql += " and numeroExemplar = " + Integer.parseInt(numExemplar);
                 }
 
-                System.out.println(stringSql);
-
-
                 try {
                     int linhas = 0;
                     comandoSql = Login.conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);  //esses parâmetros permitem o 'cursor' voltar
-                    ResultSet resultadoDoSelect = comandoSql.executeQuery(stringSql);        //tem que fazer um where do idBiblioteca
+                    ResultSet resultadoDoSelect = comandoSql.executeQuery(stringSql);
 
                     //se houver resultados/exemplares
                     if (resultadoDoSelect != null) {
@@ -340,7 +314,6 @@ public class Exemplares {
                         if (resultadoDoSelect != null){
                             DefaultTableModel modelo = new DefaultTableModel(resultadoSQL, colunas);
                             tabelaResultadoSql = new JTable(modelo);
-                            //tabelaResultadoSql.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
                             container.add(tabelaResultadoSql);
                             container.setVisible(true);
                         }
@@ -348,7 +321,6 @@ public class Exemplares {
                             System.out.println("está dando nulo");
                             JOptionPane.showMessageDialog(null , "o resultado do selct deu nulo");
                         }
-
                     }
                     else {
                         System.out.println("o resultado está dando nulo");
