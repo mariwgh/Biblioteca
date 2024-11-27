@@ -229,7 +229,7 @@ public class Exemplares {
                 break;
 
             case "ALTERAR":
-                sql = "update SisBib.Exemplar set " + colunaAlterar.getSelectedItem() + " = ? where " + colunaRef.getSelectedItem() + " = ? and idBiblioteca = " + idBibliotecaEscolhida;
+                sql = "update SisBib.Exemplar set " + colunaAlterar.getSelectedItem().toString() + " = ? where " + colunaRef.getSelectedItem().toString() + " = ? and idBiblioteca = " + idBibliotecaEscolhida;
                 try {
                     PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
 

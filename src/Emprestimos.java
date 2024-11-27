@@ -19,7 +19,7 @@ import static src.Login.formatarData;
 public class Emprestimos {
     public static JButton realizar;
     public static JPanel container, painelCampos;
-    public static JTextField inputIdLeitor, inputNumExemplar;
+    public static JTextField inputIdLeitor, inputIDExemplar;
     public static int idExemplar;
     public static String dataPrevista;
     public static JTable tabelaResultadoSqlAtrasos;
@@ -48,14 +48,14 @@ public class Emprestimos {
         painelCampos.repaint();     //redesenha o container na tela após alguma alteração
 
         inputIdLeitor = new JTextField(10);
-        inputNumExemplar = new JTextField(10);
+        inputIDExemplar = new JTextField(10);
         JLabel idLeitor = new JLabel("Digite o ID do leitor: ");
-        JLabel numExemplar = new JLabel("Digite o número do exemplar: ");
+        JLabel idExemplar = new JLabel("Digite o ID do exemplar: ");
 
         painelCampos.add(idLeitor);
         painelCampos.add(inputIdLeitor);
-        painelCampos.add(numExemplar);
-        painelCampos.add(inputNumExemplar);
+        painelCampos.add(idExemplar);
+        painelCampos.add(inputIDExemplar);
 
         // painel principal para organizar campos e botão
         container = new JPanel();
@@ -119,31 +119,11 @@ public class Emprestimos {
     }
 
     public static void inserirEmprestimo() throws SQLException {
-        String buscaExemplar = "select idExemplar from SisBib.Exemplar where numeroExemplar = ? and idBiblioteca = ?";
-        try {
-            PreparedStatement preparedStatement = Login.conexao.prepareStatement(buscaExemplar);
-            preparedStatement.setInt(1, Integer.parseInt(inputNumExemplar.getText()));
-            preparedStatement.setInt(2, idBibliotecaEscolhida);
-
-            ResultSet resultIdExemplar = preparedStatement.executeQuery();
-
-            //se houver resultados
-            if (resultIdExemplar.next()) {
-                idExemplar = resultIdExemplar.getInt("idExemplar");
-            } else {
-                throw new SQLException("Exemplar não encontrado!");
-            }
-        } catch (SQLException ex) {
-            System.out.println("Erro ao buscar idExemplar: " + ex.getMessage());
-            JOptionPane.showMessageDialog(null, ex.getMessage());
-            return;
-        }
-
         String sql = "INSERT INTO SisBib.Emprestimo (idLeitor, idExemplar, dataEmprestimo, devolucaoEfetiva, devolucaoPrevista) values (? , ? ,  ? , NULL , ?)";
         try {
             PreparedStatement preparedStatement = Login.conexao.prepareStatement(sql);
             preparedStatement.setInt(1, Integer.parseInt(inputIdLeitor.getText()));
-            preparedStatement.setInt(2, idExemplar);
+            preparedStatement.setInt(2, Integer.parseInt(inputIDExemplar.getText()));
             preparedStatement.setString(3, String.valueOf(dataCheckIn));
             preparedStatement.setString(4, String.valueOf(dataPrevista));
 

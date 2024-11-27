@@ -116,7 +116,7 @@ values
 ('Biblioteca Central')
 
 
-select * from SisBib.Emprestimo
+select* from SisBib.Emprestimo
 --ser preenchida no programa
 --idEmprestimo é identity
 
@@ -133,7 +133,14 @@ update SisBib.Emprestimo set devolucaoEfetiva = '30-11-2024' where idLeitor = 2 
 update SisBib.Emprestimo set devolucaoEfetiva = NULL where idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
 --leitor que atrasou, comando devolucao para chamar sp
 select idLeitor from SisBib.Emprestimo where devolucaoPrevista < devolucaoEfetiva and idLeitor = 2 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'JURPK1' and numeroExemplar = 6 and idBiblioteca = 2)
-
+select a.* from SisBib.atrasos as a inner join SisBib.Exemplar as ex on ex.idExemplar = a.idExemplar inner join SisBib.Biblioteca as b on b.idBiblioteca = ex.idBiblioteca where b.idBiblioteca = 2
+select numeroExemplar from SisBib.Exemplar where idExemplar = 27 and idBiblioteca = 2
+--testes:
+select idLeitor from SisBib.Emprestimo where devolucaoPrevista < devolucaoEfetiva and idLeitor = 1 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'ebjshw' and numeroExemplar = 8 and idBiblioteca = 2)
+select idLeitor from SisBib.Emprestimo where devolucaoPrevista < devolucaoEfetiva and idLeitor = 1 and idExemplar = 20
+select em.*, ex.numeroExemplar from SisBib.Emprestimo as em inner join SisBib.Exemplar as ex on ex.idExemplar = em.idExemplar
+select devolucaoPrevista, devolucaoEfetiva from SisBib.Emprestimo where devolucaoPrevista = devolucaoEfetiva and idLeitor = 1 and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = 'EBJSHW' and numeroExemplar = 1 and idBiblioteca = 2)
+update SisBib.Emprestimo set devolucaoEfetiva = ? where idLeitor = ? and idExemplar = (select idExemplar from SisBib.Exemplar where codLivro = ? and numeroExemplar = ? and idBiblioteca = ?) and devolucaoEfetiva is null
 
 
 select * from SisBib.Exemplar
@@ -367,3 +374,23 @@ DROP TRIGGER SisBib.atualizarCodLivro
 
 SELECT * FROM SisBib.Livro
 update SisBib.Livro set codLivro = 'JURPRK' where codLivro = 'JURPK1'
+
+
+--se esta suspenso nao pode emprestar
+--NAO RODEI 
+
+create trigger SisBib.impedeEmprestimoSuspenso on SisBib.Emprestimo
+instead of insert
+as
+begin
+    if exists (select 1 from SisBib.Leitor where idLeitor = (select idLeitor from inserted) and estaSuspenso = 's')
+		begin
+			throw 50000, 'não é possível realizar o empréstimo. o leitor está suspenso.', 1
+		end
+    else
+		begin
+			insert into SisBib.Emprestimo 
+			(idLeitor, idExemplar, dataEmprestimo, devolucaoEfetiva, devolucaoPrevista)
+			select idLeitor, idExemplar, dataEmprestimo, devolucaoEfetiva, devolucaoPrevista from inserted
+		end
+end
